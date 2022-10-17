@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="add methods displayJFrame and initializeOpenCv">
+    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="add method convertMatToBufImg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -96,7 +96,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665654922657</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="add method convertMatToBufImg">
+      <created>1666018754779</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1666018754779</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -127,6 +134,7 @@
     <MESSAGE value="opencv 4.6" />
     <MESSAGE value="Load and show image" />
     <MESSAGE value="add methods displayJFrame and initializeOpenCv" />
-    <option name="LAST_COMMIT_MESSAGE" value="add methods displayJFrame and initializeOpenCv" />
+    <MESSAGE value="add method convertMatToBufImg" />
+    <option name="LAST_COMMIT_MESSAGE" value="add method convertMatToBufImg" />
   </component>
 </project>

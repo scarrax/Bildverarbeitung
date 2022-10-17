@@ -2,8 +2,10 @@
 import org.opencv.core.Core;
 import org.opencv.core.MatOfByte;
 
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 
 import javax.imageio.ImageIO;
@@ -22,18 +24,13 @@ public class Main {
         String file = "Bilder/Erbsen.jpg";
         Mat image = Imgcodecs.imread(file);
 
-        // Saves an Image
-        /*
-        String file2 = "Bilder/Erbsen2.jpg";
-        Imgcodecs.imwrite(file2, image);
-        System.out.println("Image Saved ............");
-        */
 
-        BufferedImage image2 = convertMatToBufImg(image);
+        Mat dst = scalegMat(image);
+
+        BufferedImage image2 = convertMatToBufImg(dst);
 
         displayImage(image2);
 
-        System.out.println("Image Loaded");
     }
 
     public static void initialiseOpenCv(){
@@ -41,6 +38,18 @@ public class Main {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         System.out.println(Core.VERSION);
         System.out.println("load success");
+    }
+
+    public static Mat scalegMat(Mat src){
+
+        // Creating an empty matrix to store the result
+        Mat dst = new Mat();
+        // Creating the Size object
+        Size size = new Size(src.cols()*0.5, src.rows()*0.5);
+        // Scaling the Image
+        Imgproc.resize(src, dst, size, 0,0, Imgproc.INTER_AREA);
+        System.out.println("rescaled");
+        return dst;
     }
 
     public static BufferedImage convertMatToBufImg(Mat image) throws Exception{
@@ -59,7 +68,7 @@ public class Main {
 
         // Preparing the BufferedImage
         BufferedImage bufImage = ImageIO.read(in);
-
+        System.out.println("covert to bufImage");
         return bufImage;
     }
 
@@ -70,11 +79,11 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set Content to the JFrame
-        frame.setPreferredSize(new Dimension(700,500));
+        frame.setPreferredSize(new Dimension(1200,675));
         frame.pack();
         frame.getContentPane().add(new JLabel(new ImageIcon(bufImage)));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
+        System.out.println("image loaded");
     }
 }
