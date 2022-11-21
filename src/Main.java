@@ -1,20 +1,25 @@
 
-import org.opencv.core.Core;
-import org.opencv.core.MatOfByte;
+import org.opencv.core.*;
 
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+
+
+import org.opencv.core.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -24,13 +29,103 @@ public class Main {
         String file = "Bilder/Erbsen.jpg";
         Mat image = Imgcodecs.imread(file);
 
+        String fileTemp = "Bilder/ErbseGrey1.jpg";
+        Mat templ = Imgcodecs.imread(fileTemp);
+        templ = convertToGrey(templ);
 
-        Mat dst = scalegMat(image);
+
+        // ConvertToGrey and scale the image
+        Mat dst = scalegMat(convertToGrey(image));
+
+        // result matrix
+        int result_cols = image.cols() - templ.cols() + 1;
+        int result_rows = image.rows() - templ.rows() + 1;
+        Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+        Point matchLoc;
+        List<String> list = new ArrayList<>();
+        /*
+        Imgproc.matchTemplate(dst, templ, result, Imgproc.TM_CCOEFF_NORMED);
+        Core.normalize(result, result, 0, 1,Core.NORM_MINMAX, -1, new Mat());
+
+        Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
+        matchLoc = mmr.maxLoc;
+        list.add(String.valueOf(matchLoc));
+        System.out.println("List of points: "+ list);
+*/
+
+        //Imgproc.rectangle(imageDisplay, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
+              //  new Scalar(0, 0, 0), 2, 8, 0);
+        /*
+        Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
+                matchLoc.y + templ.rows()), new Scalar(0,0,0), 2,8,0);
+        System.out.println(matchLoc);
+        System.out.println(templ.cols());
+        System.out.println(templ.rows());
+
+        System.out.println(new Point(matchLoc.x + templ.cols(),
+                matchLoc.y + templ.rows())); */
+
+        /*String file3 = "Bilder/MatchTemp.jpg";
+        Imgcodecs.imwrite(file3, dst); */
+        // multiple template matching
+        Mat clone;
+        double maxval;
+        double threshold = 0.95;
+        Mat d;
+        boolean firstrun = true;
+
+        while(true){
+            if(firstrun == false){
+                Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
+                matchLoc = mmr.maxLoc;
+                maxval = mmr.maxVal;
+                System.out.println("Maxval: " + maxval);
+                System.out.println("matchLoc" + matchLoc);
+                Point matchLocEnd = new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows());
+                System.out.println("matchLocEnd"+ matchLocEnd);
+
+
+                d = image.clone();
+                if(maxval >= threshold){
+                    list.add(String.valueOf(matchLoc));
+                    System.out.println("Template Matches with input image");
+                    Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
+                            matchLoc.y + templ.rows()), new Scalar(0,0,0), 2,8,0);
+                    Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
+                            new Scalar(0, 0, 0), 2, 8, 0);
+                }else{
+                    break;
+                }
+            }else {
+                Imgproc.matchTemplate(dst, templ, result, Imgproc.TM_CCOEFF_NORMED);
+                Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
+                Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
+                matchLoc = mmr.maxLoc;
+
+                list.add(String.valueOf(matchLoc));
+                System.out.println("List of points" + list);
+                Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
+                        matchLoc.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
+                Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
+                        new Scalar(0, 0, 0), 2, 8, 0);
+                firstrun = false;
+            }
+
+        }
+
+
+        // store the grey image
+        //String file2 = "Bilder/ErbsenGrey.jpg";
+        //Imgcodecs.imwrite(file2, dst);
+        //System.out.println("List of points " + list);
+        FileWriter writer = new FileWriter("output.txt");
+        for(String str: list){
+            writer.write(str + System.lineSeparator());
+        }
+        writer.close();
 
         BufferedImage image2 = convertMatToBufImg(dst);
-
         displayImage(image2);
-
     }
 
     public static void initialiseOpenCv(){
@@ -38,6 +133,12 @@ public class Main {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         System.out.println(Core.VERSION);
         System.out.println("load success");
+    }
+
+    public static Mat convertToGrey(Mat src){
+        Mat greyImage = new Mat();
+        Imgproc.cvtColor(src, greyImage, Imgproc.COLOR_BGR2GRAY);
+        return greyImage;
     }
 
     public static Mat scalegMat(Mat src){

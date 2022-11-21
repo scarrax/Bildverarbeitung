@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="add method convertMatToBufImg">
+      <change afterPath="$PROJECT_DIR$/Bilder/ErbseGrey1.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -36,6 +37,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projekt\Java\Bildverarbeitung\Bilder" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Niklas Hübner\IdeaProjects\ImageProcessingAlg\Bilder" />
     </key>
   </component>
   <component name="RunManager">
