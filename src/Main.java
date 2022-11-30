@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 
-
 import org.opencv.core.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -17,9 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -41,8 +40,15 @@ public class Main {
         int result_cols = image.cols() - templ.cols() + 1;
         int result_rows = image.rows() - templ.rows() + 1;
         Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+
+        String file4 = "Bilder/result0.jpg";
+        Imgcodecs.imwrite(file4, result);
+
         Point matchLoc;
-        List<String> list = new ArrayList<>();
+        List<Point> list = new ArrayList<Point>();
+        List<String> listValue = new ArrayList<>();
+
+
         /*
         Imgproc.matchTemplate(dst, templ, result, Imgproc.TM_CCOEFF_NORMED);
         Core.normalize(result, result, 0, 1,Core.NORM_MINMAX, -1, new Mat());
@@ -68,31 +74,35 @@ public class Main {
         /*String file3 = "Bilder/MatchTemp.jpg";
         Imgcodecs.imwrite(file3, dst); */
         // multiple template matching
-        Mat clone;
-        double maxval;
+
+        double maxvalue;
         double threshold = 0.95;
-        Mat d;
+
         boolean firstrun = true;
+
 
         while(true){
             if(firstrun == false){
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
                 matchLoc = mmr.maxLoc;
-                maxval = mmr.maxVal;
-                System.out.println("Maxval: " + maxval);
+                maxvalue = mmr.maxVal;
+                System.out.println("Maxval: " + maxvalue);
                 System.out.println("matchLoc" + matchLoc);
-                Point matchLocEnd = new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows());
-                System.out.println("matchLocEnd"+ matchLocEnd);
+                //Point matchLocEnd = new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows());
+                //System.out.println("matchLocEnd"+ matchLocEnd);
 
 
-                d = image.clone();
-                if(maxval >= threshold){
-                    list.add(String.valueOf(matchLoc));
+                //d = image.clone();
+                if(maxvalue >= threshold){
+                    //list.add(String.valueOf(matchLoc));
+                    list.add(matchLoc);
+                    listValue.add(String.valueOf(maxvalue));
                     System.out.println("Template Matches with input image");
-                    Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
-                            matchLoc.y + templ.rows()), new Scalar(0,0,0), 2,8,0);
-                    Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
-                            new Scalar(0, 0, 0), 2, 8, 0);
+                    // Rectangle all objects over the threshold in the original image
+                    Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
+                            new Scalar(0,255,0), 2,8,0);
+                    Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
+                            new Scalar(0, 255, 0), 2,8,0);
                 }else{
                     break;
                 }
@@ -101,8 +111,13 @@ public class Main {
                 Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
                 matchLoc = mmr.maxLoc;
+                maxvalue = mmr.maxVal;
+                //String file3 = "Bilder/result2.jpg";
+                //Imgcodecs.imwrite(file3, result);
 
-                list.add(String.valueOf(matchLoc));
+                //list.add(String.valueOf(matchLoc));
+                list.add(matchLoc);
+                listValue.add(String.valueOf(maxvalue));
                 System.out.println("List of points" + list);
                 Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
                         matchLoc.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
@@ -113,16 +128,23 @@ public class Main {
 
         }
 
+        //Collections.sort(list);
 
         // store the grey image
-        //String file2 = "Bilder/ErbsenGrey.jpg";
-        //Imgcodecs.imwrite(file2, dst);
+        //String file2 = "Bilder/result1.jpg";
+        //Imgcodecs.imwrite(file2, result);
         //System.out.println("List of points " + list);
         FileWriter writer = new FileWriter("output.txt");
-        for(String str: list){
+        for(Point str: list){
             writer.write(str + System.lineSeparator());
         }
         writer.close();
+
+        FileWriter writer2 = new FileWriter("maxValues.txt");
+        for(String str: listValue){
+            writer2.write(str + System.lineSeparator());
+        }
+        writer2.close();
 
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
