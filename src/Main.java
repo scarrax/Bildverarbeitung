@@ -6,7 +6,6 @@ import org.opencv.imgproc.Imgproc;
 
 
 import javax.imageio.ImageIO;
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,8 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class Main {
         Imgcodecs.imwrite(file4, result);
 
         Point matchLoc;
-        List<Point> list = new ArrayList<Point>();
+        List<Point> listofPoints = new ArrayList<Point>();
         List<String> listValue = new ArrayList<>();
 
 
@@ -56,8 +55,8 @@ public class Main {
 
         Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
         matchLoc = mmr.maxLoc;
-        list.add(String.valueOf(matchLoc));
-        System.out.println("List of points: "+ list);
+        listofPoints.add(String.valueOf(matchLoc));
+        System.out.println("List of points: "+ listofPoints);
 */
 
         //Imgproc.rectangle(imageDisplay, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
@@ -95,8 +94,8 @@ public class Main {
 
                 //d = image.clone();
                 if(maxvalue >= threshold){
-                    //list.add(String.valueOf(matchLoc));
-                    list.add(matchLoc);
+                    //listofPoints.add(String.valueOf(matchLoc));
+                    listofPoints.add(matchLoc);
                     listValue.add(String.valueOf(maxvalue));
                     System.out.println("Template Matches with input image");
                     // Rectangle all objects over the threshold in the original image
@@ -113,13 +112,10 @@ public class Main {
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
                 matchLoc = mmr.maxLoc;
                 maxvalue = mmr.maxVal;
-                //String file3 = "Bilder/result2.jpg";
-                //Imgcodecs.imwrite(file3, result);
 
-                //list.add(String.valueOf(matchLoc));
-                list.add(matchLoc);
+                listofPoints.add(matchLoc);
                 listValue.add(String.valueOf(maxvalue));
-                System.out.println("List of points" + list);
+                System.out.println("List of points" + listofPoints);
                 Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
                         matchLoc.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
                 Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
@@ -129,9 +125,33 @@ public class Main {
 
         }
 
+        List<Point> totalPoints = removeNearPoints(listofPoints, dst, templ);
 
-        // todo: x und y values vergleichen, zu nah aneinander löschen bzw nicht anzeigen
-        list.sort(new Comparator<Point>() {
+        writeTxtFile("output.txt", listofPoints);
+        writeTxtFile("totalPoints.txt", totalPoints);
+
+
+        FileWriter writer2 = new FileWriter("maxValues.txt");
+        for(String str: listValue){
+            writer2.write(str + System.lineSeparator());
+        }
+        writer2.close();
+
+        BufferedImage image2 = convertMatToBufImg(dst);
+        displayImage(image2);
+    }
+
+    public static void writeTxtFile(String filename, List<Point> list) throws IOException {
+        FileWriter writer = new FileWriter(filename);
+        for(Point p: list){
+            writer.write(p + System.lineSeparator());
+        }
+        writer.close();
+    }
+
+    public static void sortList(List<Point> listofPoints){
+        // Liste sortieren
+        listofPoints.sort(new Comparator<Point>() {
             @Override
             public int compare(Point o1, Point o2) {
                 int result = Double.compare(o1.x, o2.x);
@@ -139,20 +159,24 @@ public class Main {
                 return result;
             }
         });
+    }
+    public static List removeNearPoints(List<Point> listofPoints, Mat dst, Mat templ){
+        sortList(listofPoints);
 
-        // entfernen zu naher koordinaten
+        // entfernen zu naher Koordinaten
         Point previousPoint = new Point();
         List<Point> totalPoints = new ArrayList<Point>();
-        boolean firstrun2 = true;
+        boolean firstrun = true;
+
         // anzeigen der gefundenen Erbsen
-        for(Point p : list){
-            if (firstrun2){
+        for(Point p : listofPoints){
+            if (firstrun){
                 previousPoint.x = p.x;
                 previousPoint.y = p.y;
                 totalPoints.add(p);
                 Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),
                         p.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
-                firstrun2 = false;
+                firstrun = false;
                 continue;
             }
             if((p.x == previousPoint.x & p.y == previousPoint.y) ||
@@ -168,32 +192,8 @@ public class Main {
 
         }
 
-        System.out.println(totalPoints.size());
-
-        // store the grey image
-        //String file2 = "Bilder/result1.jpg";
-        //Imgcodecs.imwrite(file2, result);
-        //System.out.println("List of points " + list);
-        FileWriter writer = new FileWriter("output.txt");
-        for(Point str: list){
-            writer.write(str + System.lineSeparator());
-        }
-        writer.close();
-
-        FileWriter writer3 = new FileWriter("totalpoints.txt");
-        for(Point str: totalPoints){
-            writer3.write(str + System.lineSeparator());
-        }
-        writer3.close();
-
-        FileWriter writer2 = new FileWriter("maxValues.txt");
-        for(String str: listValue){
-            writer2.write(str + System.lineSeparator());
-        }
-        writer2.close();
-
-        BufferedImage image2 = convertMatToBufImg(dst);
-        displayImage(image2);
+        System.out.println("Es wurden: " + totalPoints.size() + " Objekte gefunden.");
+        return totalPoints;
     }
 
     public static void initialiseOpenCv(){
