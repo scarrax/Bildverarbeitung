@@ -6,6 +6,7 @@ import org.opencv.imgproc.Imgproc;
 
 
 import javax.imageio.ImageIO;
+import javax.imageio.plugins.jpeg.JPEGImageReadParam;
 import javax.swing.*;
 import java.awt.*;
 
@@ -99,8 +100,8 @@ public class Main {
                     listValue.add(String.valueOf(maxvalue));
                     System.out.println("Template Matches with input image");
                     // Rectangle all objects over the threshold in the original image
-                    Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
-                            new Scalar(0,255,0), 2,8,0);
+                    //Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
+                    //        new Scalar(0,255,0), 2,8,0);
                     Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
                             new Scalar(0, 255, 0), 2,8,0);
                 }else{
@@ -128,7 +129,46 @@ public class Main {
 
         }
 
-        //Collections.sort(list);
+
+        // todo: x und y values vergleichen, zu nah aneinander löschen bzw nicht anzeigen
+        list.sort(new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+                int result = Double.compare(o1.x, o2.x);
+                if (result == 0) result = Double.compare(o1.y, o2.y);
+                return result;
+            }
+        });
+
+        // entfernen zu naher koordinaten
+        Point previousPoint = new Point();
+        List<Point> totalPoints = new ArrayList<Point>();
+        boolean firstrun2 = true;
+        // anzeigen der gefundenen Erbsen
+        for(Point p : list){
+            if (firstrun2){
+                previousPoint.x = p.x;
+                previousPoint.y = p.y;
+                totalPoints.add(p);
+                Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),
+                        p.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
+                firstrun2 = false;
+                continue;
+            }
+            if((p.x == previousPoint.x & p.y == previousPoint.y) ||
+                    (p.x <= previousPoint.x + 20 & p.y <= previousPoint.y + 20)) {
+                System.out.println("gleiche werte");
+            }else{
+                totalPoints.add(p);
+                Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),
+                        p.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
+                previousPoint.x = p.x;
+                previousPoint.y = p.y;
+            }
+
+        }
+
+        System.out.println(totalPoints.size());
 
         // store the grey image
         //String file2 = "Bilder/result1.jpg";
@@ -139,6 +179,12 @@ public class Main {
             writer.write(str + System.lineSeparator());
         }
         writer.close();
+
+        FileWriter writer3 = new FileWriter("totalpoints.txt");
+        for(Point str: totalPoints){
+            writer3.write(str + System.lineSeparator());
+        }
+        writer3.close();
 
         FileWriter writer2 = new FileWriter("maxValues.txt");
         for(String str: listValue){
