@@ -28,6 +28,11 @@ public class Main {
         String file = "Bilder/Erbsen.jpg";
         Mat image = Imgcodecs.imread(file);
 
+
+        String erbsenFile = "Bilder/Erbsen2.jpg";
+        Mat erbsenMat = Imgcodecs.imread(erbsenFile);
+        edgeDetection(erbsenMat);
+
         String fileTemp = "Bilder/ErbseGrey1.jpg";
         Mat templ = Imgcodecs.imread(fileTemp);
         templ = convertToGrey(templ);
@@ -79,7 +84,6 @@ public class Main {
         double threshold = 0.95;
 
         boolean firstrun = true;
-
 
         while(true){
             if(firstrun == false){
@@ -139,6 +143,56 @@ public class Main {
 
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
+    }
+
+    public static void edgeDetection(Mat src){
+
+        // convert into grayscale
+        Mat gray = new Mat();
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
+
+        // Gaussian Blur
+        //Mat blur = new Mat();
+        //Imgproc.GaussianBlur(gray, blur, new Size(5,5), 0);
+
+        // Detecting the edges
+        Mat edges = new Mat();
+        Imgproc.Canny(gray, edges, 70, 150);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat dst = Mat.zeros(gray.size(), CvType.CV_8UC3);
+        Scalar white = new Scalar(255, 255, 255);
+
+        // find contours
+        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        // Draw contours in dest Mat
+        Imgproc.drawContours(dst, contours, -1, white);
+
+        // fill
+        for(MatOfPoint contour: contours){
+            Imgproc.fillPoly(dst, Arrays.asList(contour), white);
+
+        }
+
+        Scalar green = new Scalar(81,180,0);
+        for(MatOfPoint contour: contours){
+            RotatedRect rotatedRect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
+            drawRotatedRect(dst, rotatedRect, green, 4);
+        }
+
+        Imgcodecs.imwrite("Bilder/contours3.jpg", dst);
+        System.out.println("save contours3");
+    }
+
+    public static void drawRotatedRect(Mat image, RotatedRect rotatedRect, Scalar color,int thickness){
+        Point[] vertices = new Point[4];
+        rotatedRect.points(vertices);
+        MatOfPoint points = new MatOfPoint(vertices);
+        Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
+        System.out.println("points + " + rotatedRect);
+
+        // Todo: Punkte bekommen von einem Rechteck, dann ausschneiden und das Bild speichern
     }
 
     public static void writeTxtFile(String filename, List<Point> list) throws IOException {
