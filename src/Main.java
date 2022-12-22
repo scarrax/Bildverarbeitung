@@ -90,8 +90,8 @@ public class Main {
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
                 matchLoc = mmr.maxLoc;
                 maxvalue = mmr.maxVal;
-                System.out.println("Maxval: " + maxvalue);
-                System.out.println("matchLoc" + matchLoc);
+                //System.out.println("Maxval: " + maxvalue);
+                //System.out.println("matchLoc" + matchLoc);
                 //Point matchLocEnd = new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows());
                 //System.out.println("matchLocEnd"+ matchLocEnd);
 
@@ -101,7 +101,7 @@ public class Main {
                     //listofPoints.add(String.valueOf(matchLoc));
                     listofPoints.add(matchLoc);
                     listValue.add(String.valueOf(maxvalue));
-                    System.out.println("Template Matches with input image");
+                    //System.out.println("Template Matches with input image");
                     // Rectangle all objects over the threshold in the original image
                     //Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
                     //        new Scalar(0,255,0), 2,8,0);
@@ -119,7 +119,7 @@ public class Main {
 
                 listofPoints.add(matchLoc);
                 listValue.add(String.valueOf(maxvalue));
-                System.out.println("List of points" + listofPoints);
+                //System.out.println("List of points" + listofPoints);
                 Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
                         matchLoc.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
                 Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
@@ -152,19 +152,23 @@ public class Main {
         Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
 
         // Gaussian Blur
-        //Mat blur = new Mat();
-        //Imgproc.GaussianBlur(gray, blur, new Size(5,5), 0);
+        Mat blur = new Mat();
+        Imgproc.GaussianBlur(gray, blur, new Size(3,3), 0);
 
         // Detecting the edges
         Mat edges = new Mat();
-        Imgproc.Canny(gray, edges, 70, 150);
+        Imgproc.Canny(blur, edges, 75, 150);
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat dst = Mat.zeros(gray.size(), CvType.CV_8UC3);
         Scalar white = new Scalar(255, 255, 255);
 
         // find contours
-        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        System.out.println(hierarchy.elemSize());
+
 
         // Draw contours in dest Mat
         Imgproc.drawContours(dst, contours, -1, white);
@@ -172,17 +176,23 @@ public class Main {
         // fill
         for(MatOfPoint contour: contours){
             Imgproc.fillPoly(dst, Arrays.asList(contour), white);
-
         }
 
         Scalar green = new Scalar(81,180,0);
+        List rectangleSize = new ArrayList<>();
+
         for(MatOfPoint contour: contours){
             RotatedRect rotatedRect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
+            rectangleSize.add(rotatedRect.size.area());
+            System.out.println("Size: "+ rotatedRect.size.area() + " Angle: " + rotatedRect.angle);
             drawRotatedRect(dst, rotatedRect, green, 4);
         }
+        rectangleSize.sort(Comparator.naturalOrder().reversed());
+        System.out.println(rectangleSize);
 
-        Imgcodecs.imwrite("Bilder/contours3.jpg", dst);
-        System.out.println("save contours3");
+
+        Imgcodecs.imwrite("Bilder/contours4.jpg", dst);
+        System.out.println("save contours4");
     }
 
     public static void drawRotatedRect(Mat image, RotatedRect rotatedRect, Scalar color,int thickness){
@@ -190,9 +200,13 @@ public class Main {
         rotatedRect.points(vertices);
         MatOfPoint points = new MatOfPoint(vertices);
         Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
-        System.out.println("points + " + rotatedRect);
+        System.out.println("points + " + Arrays.toString(points.toArray()));
 
         // Todo: Punkte bekommen von einem Rechteck, dann ausschneiden und das Bild speichern
+    }
+
+    public static void largesArea(){
+
     }
 
     public static void writeTxtFile(String filename, List<Point> list) throws IOException {
@@ -235,7 +249,7 @@ public class Main {
             }
             if((p.x == previousPoint.x & p.y == previousPoint.y) ||
                     (p.x <= previousPoint.x + 20 & p.y <= previousPoint.y + 20)) {
-                System.out.println("gleiche werte");
+                //System.out.println("gleiche werte");
             }else{
                 totalPoints.add(p);
                 Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),

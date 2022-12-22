@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="methode sortList -&gt; listen sortieren aufsteigend&#10;methode removeNearPoints -&gt; verhindert das Objekte öfter gezählt werden">
-      <change afterPath="$PROJECT_DIR$/Bilder/Erbsen2.jpg" afterDir="false" />
+    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -150,7 +149,14 @@
       <option name="project" value="LOCAL" />
       <updated>1670258402291</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects">
+      <created>1671706428561</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1671706428561</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -185,6 +191,7 @@
     <MESSAGE value="multi template matching + output coordinate txt and output maxvalue txt" />
     <MESSAGE value="totalpoints.txt und output.txt, entfernt zu nahe kooridinaten" />
     <MESSAGE value="methode sortList -&gt; listen sortieren aufsteigend&#10;methode removeNearPoints -&gt; verhindert das Objekte öfter gezählt werden" />
-    <option name="LAST_COMMIT_MESSAGE" value="methode sortList -&gt; listen sortieren aufsteigend&#10;methode removeNearPoints -&gt; verhindert das Objekte öfter gezählt werden" />
+    <MESSAGE value="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects" />
+    <option name="LAST_COMMIT_MESSAGE" value="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects" />
   </component>
 </project>
