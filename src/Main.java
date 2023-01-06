@@ -29,24 +29,27 @@ public class Main {
         Mat image = Imgcodecs.imread(file);
 
 
-        String erbsenFile = "Bilder/Erbsen2.jpg";
+        String erbsenFile = "Bilder/Erbsen.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
         Mat template = new Mat();
+        erbsenMat = scalegMat(erbsenMat);
         template = edgeDetection(erbsenMat);
 
-        String fileTemp = "Bilder/ErbseGrey1.jpg";
+        /*String fileTemp = "Bilder/ErbseGrey1.jpg";
         Mat templ = Imgcodecs.imread(fileTemp);
-        templ = convertToGrey(templ);
+        templ = convertToGrey(templ); */
 
 
+        //template = scalegMat(template);
+        Mat dst = convertToGrey(erbsenMat);
 
 
         // ConvertToGrey and scale the image
-        Mat dst = scalegMat(convertToGrey(image));
+        //Mat dst = scalegMat(convertToGrey(image));
 
         // result matrix
-        int result_cols = image.cols() - templ.cols() + 1;
-        int result_rows = image.rows() - templ.rows() + 1;
+        int result_cols = image.cols() - template.cols() + 1;
+        int result_rows = image.rows() - template.rows() + 1;
         Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
 
         String file4 = "Bilder/result0.jpg";
@@ -84,7 +87,7 @@ public class Main {
         // multiple template matching
 
         double maxvalue;
-        double threshold = 0.95;
+        double threshold = 0.85;
 
         boolean firstrun = true;
 
@@ -108,13 +111,13 @@ public class Main {
                     // Rectangle all objects over the threshold in the original image
                     //Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
                     //        new Scalar(0,255,0), 2,8,0);
-                    Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(),matchLoc.y + templ.rows()),
+                    Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + template.cols(),matchLoc.y + template.rows()),
                             new Scalar(0, 255, 0), 2,8,0);
                 }else{
                     break;
                 }
             }else {
-                Imgproc.matchTemplate(dst, templ, result, Imgproc.TM_CCOEFF_NORMED);
+                Imgproc.matchTemplate(dst, template, result, Imgproc.TM_CCOEFF_NORMED);
                 Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
                 Core.MinMaxLocResult mmr = Core.minMaxLoc(result);
                 matchLoc = mmr.maxLoc;
@@ -122,27 +125,31 @@ public class Main {
 
                 listofPoints.add(matchLoc);
                 listValue.add(String.valueOf(maxvalue));
-                //System.out.println("List of points" + listofPoints);
-                Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templ.cols(),
-                        matchLoc.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
-                Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()),
+                System.out.println("List of points " + listofPoints);
+                System.out.println("List of maxvalue " + listValue);
+                /*Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + template.cols(),
+                        matchLoc.y + template.rows()), new Scalar(0, 0, 0), 2, 8, 0); */
+                Imgproc.rectangle(result, matchLoc, new Point(matchLoc.x + template.cols(), matchLoc.y + template.rows()),
                         new Scalar(0, 0, 0), 2, 8, 0);
                 firstrun = false;
             }
 
         }
 
-        List<Point> totalPoints = removeNearPoints(listofPoints, dst, templ);
+        List<Point> totalPoints = removeNearPoints(listofPoints, dst, template);
 
-        writeTxtFile("output.txt", listofPoints);
-        writeTxtFile("totalPoints.txt", totalPoints);
+        writeTxtFile("output2.txt", listofPoints);
+        writeTxtFile("totalPoints2.txt", totalPoints);
 
 
-        FileWriter writer2 = new FileWriter("maxValues.txt");
+        FileWriter writer2 = new FileWriter("maxValues2.txt");
         for(String str: listValue){
             writer2.write(str + System.lineSeparator());
         }
         writer2.close();
+
+        String file3 = "Bilder/MultiMatchTemp.jpg";
+        Imgcodecs.imwrite(file3, dst);
 
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
@@ -170,7 +177,7 @@ public class Main {
         Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        System.out.println(hierarchy.elemSize());
+        System.out.println("Hierarch elementsize: " + hierarchy.elemSize());
 
 
         // Draw contours in dest Mat
@@ -197,14 +204,15 @@ public class Main {
         // Rectangle with the larges area
         RotatedRect rotatedRect = largesArea(rotatedRectList);
         // get the 4 points
-        Point templateP1 = new Point();
+        Point templateP1 = coordinates(rotatedRect, 0, 0);
         Point templateP2 = new Point();
         Point templateP3 = new Point();
         Point templateP4 = new Point();
-        templateP1= coordinates(rotatedRect, 0, 0);
+        //templateP1= coordinates(rotatedRect, 0, 0);
         templateP2= coordinates(rotatedRect, 1, 0);
         templateP3= coordinates(rotatedRect, 2, 0);
         templateP4= coordinates(rotatedRect, 3, 0);
+        System.out.println("templatep1: "+templateP1);
 
         Mat cropMat = new Mat();
         cropMat = cropTemplate(gray, templateP1, templateP2, templateP3, templateP4);
@@ -214,10 +222,11 @@ public class Main {
     }
 
     public static Mat cropTemplate(Mat image_original, Point p1, Point p2, Point p3, Point p4){
-        System.out.println(p1);
+        System.out.println("p1 " + p1);
         System.out.println(p2);
         System.out.println(p3);
         System.out.println(p4);
+        //Todo: Punkt links oben berechnen, dann die Punkte die auf der x-Achse am weitesten auseinander liegen
         Rect rectCrop = new Rect((int) p2.x, (int) p2.y, (int) (p4.x - p2.x+1), (int) (p4.y-p2.y+1));
         /*Imgproc.rectangle (
                 image_original,                    //Matrix obj of the image
@@ -239,7 +248,7 @@ public class Main {
         Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
         System.out.println("points + " + Arrays.toString(points.toArray()));
 
-        // Todo: Punkte bekommen von einem Rechteck, dann ausschneiden und das Bild speichern
+
     }
 
     public static RotatedRect largesArea(List<RotatedRect> rotatedRectList){
@@ -251,9 +260,9 @@ public class Main {
             }
         });
 
-        /*for(RotatedRect name: rotatedRectList){
+        for(RotatedRect name: rotatedRectList){
             System.out.println("Sortiert: " + name.size.area());
-        }*/
+        }
 
         return lastRotRect = rotatedRectList.get(rotatedRectList.size()-1);
     }
@@ -299,6 +308,7 @@ public class Main {
     }
     public static List removeNearPoints(List<Point> listofPoints, Mat dst, Mat templ){
         sortList(listofPoints);
+        System.out.println("ListofPoints: " + listofPoints);
 
         // entfernen zu naher Koordinaten
         Point previousPoint = new Point();
@@ -317,10 +327,11 @@ public class Main {
                 continue;
             }
             if((p.x == previousPoint.x & p.y == previousPoint.y) ||
-                    (p.x <= previousPoint.x + 20 & p.y <= previousPoint.y + 20)) {
+                    (p.x <= previousPoint.x + 50 & p.y <= previousPoint.y + 50)) {
                 //System.out.println("gleiche werte");
             }else{
                 totalPoints.add(p);
+                System.out.println("Add Points: " + p);
                 Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),
                         p.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
                 previousPoint.x = p.x;
@@ -328,6 +339,9 @@ public class Main {
             }
 
         }
+
+        String file3 = "Bilder/AfterRemoveNearPoints.jpg";
+        Imgcodecs.imwrite(file3, dst);
 
         System.out.println("Es wurden: " + totalPoints.size() + " Objekte gefunden.");
         return totalPoints;

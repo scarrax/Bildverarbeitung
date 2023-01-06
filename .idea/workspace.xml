@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects">
+    <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="croped image template">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/contours4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/contours4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_output.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_output.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_recangle.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_recangle.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/result0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/result0.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,17 +33,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Projekt/Java/Bildverarbeitung/Bilder&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Projekt/Java/Bildverarbeitung/Bilder",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projekt\Java\Bildverarbeitung\Bilder" />
@@ -156,7 +161,21 @@
       <option name="project" value="LOCAL" />
       <updated>1671706428561</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="croped image template">
+      <created>1672315045443</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1672315045443</updated>
+    </task>
+    <task id="LOCAL-00014" summary="croped image template">
+      <created>1672315060047</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1672315060047</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -192,6 +211,7 @@
     <MESSAGE value="totalpoints.txt und output.txt, entfernt zu nahe kooridinaten" />
     <MESSAGE value="methode sortList -&gt; listen sortieren aufsteigend&#10;methode removeNearPoints -&gt; verhindert das Objekte öfter gezählt werden" />
     <MESSAGE value="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects" />
-    <option name="LAST_COMMIT_MESSAGE" value="edgeDetection Methode -&gt; finding contours&#10;drawRotatedRect Methode -&gt; rectangle around the detected objects" />
+    <MESSAGE value="croped image template" />
+    <option name="LAST_COMMIT_MESSAGE" value="croped image template" />
   </component>
 </project>
