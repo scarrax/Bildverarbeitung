@@ -29,12 +29,36 @@ public class Main {
         Mat image = Imgcodecs.imread(file);
 
 
-        String erbsenFile = "Bilder/Erbsen.jpg";
-        Mat erbsenMat = Imgcodecs.imread(erbsenFile);
-        Mat template = new Mat();
-        erbsenMat = scalegMat(erbsenMat);
-        template = edgeDetection(erbsenMat);
+        //String erbsenFile = "Bilder/Erbsen2.jpg";
+        //Mat erbsenMat = Imgcodecs.imread(erbsenFile);
+        //Mat template = new Mat();
+        //erbsenMat = scalegMat(erbsenMat);
+        //template = edgeDetection(erbsenMat);
 
+        // new main
+        // Bild einlesen
+        String erbsenFile = "Bilder/Erbsen2.jpg";
+        Mat erbsenMat = Imgcodecs.imread(erbsenFile);
+
+        TemplateDetection td = new TemplateDetection(erbsenMat);
+        erbsenMat = td.scaleMat(erbsenMat);
+        RotatedRect rotatedRect = new RotatedRect();
+        rotatedRect = td.edgeDetection(erbsenMat);
+
+        Map<String, Point> resultPoints = td.templatePoints(rotatedRect);
+        System.out.println("P1 "+resultPoints.get("P1"));
+        System.out.println("P2 "+resultPoints.get("P2"));
+        System.out.println("P3 "+resultPoints.get("P3"));
+        System.out.println("P4 "+resultPoints.get("P4"));
+
+        Mat template = new Mat();
+        template = td.cropTemplate(erbsenMat,
+                resultPoints.get("P1"),
+                resultPoints.get("P2"),
+                resultPoints.get("P3"),
+                resultPoints.get("P4"));
+
+        template = td.colorToGray(template);
         /*String fileTemp = "Bilder/ErbseGrey1.jpg";
         Mat templ = Imgcodecs.imread(fileTemp);
         templ = convertToGrey(templ); */
@@ -155,138 +179,6 @@ public class Main {
         displayImage(image2);
     }
 
-    public static Mat edgeDetection(Mat src){
-
-        // convert into grayscale
-        Mat gray = new Mat();
-        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
-
-        // Gaussian Blur
-        Mat blur = new Mat();
-        Imgproc.GaussianBlur(gray, blur, new Size(3,3), 0);
-
-        // Detecting the edges
-        Mat edges = new Mat();
-        Imgproc.Canny(blur, edges, 75, 150);
-
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat dst = Mat.zeros(gray.size(), CvType.CV_8UC3);
-        Scalar white = new Scalar(255, 255, 255);
-
-        // find contours
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        System.out.println("Hierarch elementsize: " + hierarchy.elemSize());
-
-
-        // Draw contours in dest Mat
-        Imgproc.drawContours(dst, contours, -1, white);
-
-        // fill
-        for(MatOfPoint contour: contours){
-            Imgproc.fillPoly(dst, Arrays.asList(contour), white);
-        }
-
-        Scalar green = new Scalar(81,180,0);
-        List rectangleSize = new ArrayList<>();
-        List<RotatedRect> rotatedRectList = new ArrayList<RotatedRect>();
-
-        for(MatOfPoint contour: contours){
-            RotatedRect rotatedRect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
-            rotatedRectList.add(rotatedRect);
-            //rectangleSize.add(rotatedRect.size.area());
-            System.out.println("Size: "+ rotatedRect.size.area() + " Angle: " + rotatedRect.angle);
-            drawRotatedRect(dst, rotatedRect, green, 4);
-        }
-
-
-        // Rectangle with the larges area
-        RotatedRect rotatedRect = largesArea(rotatedRectList);
-        // get the 4 points
-        Point templateP1 = coordinates(rotatedRect, 0, 0);
-        Point templateP2 = new Point();
-        Point templateP3 = new Point();
-        Point templateP4 = new Point();
-        //templateP1= coordinates(rotatedRect, 0, 0);
-        templateP2= coordinates(rotatedRect, 1, 0);
-        templateP3= coordinates(rotatedRect, 2, 0);
-        templateP4= coordinates(rotatedRect, 3, 0);
-        System.out.println("templatep1: "+templateP1);
-
-        Mat cropMat = new Mat();
-        cropMat = cropTemplate(gray, templateP1, templateP2, templateP3, templateP4);
-
-        Imgcodecs.imwrite("Bilder/contours4.jpg", dst);
-        return cropMat;
-    }
-
-    public static Mat cropTemplate(Mat image_original, Point p1, Point p2, Point p3, Point p4){
-        System.out.println("p1 " + p1);
-        System.out.println(p2);
-        System.out.println(p3);
-        System.out.println(p4);
-        //Todo: Punkt links oben berechnen, dann die Punkte die auf der x-Achse am weitesten auseinander liegen
-        Rect rectCrop = new Rect((int) p2.x, (int) p2.y, (int) (p4.x - p2.x+1), (int) (p4.y-p2.y+1));
-        /*Imgproc.rectangle (
-                image_original,                    //Matrix obj of the image
-                p4,        //p1
-                p4,       //p2
-                new Scalar(0, 0, 255),     //Scalar object for color
-                5                          //Thickness of the line
-        ); */
-        Mat image_output = image_original.submat(rectCrop);
-        Imgcodecs.imwrite("Bilder/image_output.jpg", image_output);
-        Imgcodecs.imwrite("Bilder/image_recangle.jpg", image_original);
-        return image_output;
-    }
-
-    public static void drawRotatedRect(Mat image, RotatedRect rotatedRect, Scalar color,int thickness){
-        Point[] vertices = new Point[4];
-        rotatedRect.points(vertices);
-        MatOfPoint points = new MatOfPoint(vertices);
-        Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
-        System.out.println("points + " + Arrays.toString(points.toArray()));
-
-
-    }
-
-    public static RotatedRect largesArea(List<RotatedRect> rotatedRectList){
-        RotatedRect lastRotRect = new RotatedRect();
-        rotatedRectList.sort(new Comparator<RotatedRect>() {
-            @Override
-            public int compare(RotatedRect o1, RotatedRect o2) {
-                return Double.compare(o1.size.area(), o2.size.area());
-            }
-        });
-
-        for(RotatedRect name: rotatedRectList){
-            System.out.println("Sortiert: " + name.size.area());
-        }
-
-        return lastRotRect = rotatedRectList.get(rotatedRectList.size()-1);
-    }
-
-    public static Point coordinates(RotatedRect rotatedRect, int row, int col){
-
-        Point[] vertices = new Point[4];
-        rotatedRect.points(vertices);
-        MatOfPoint points = new MatOfPoint(vertices);
-        System.out.println("last points: " + Arrays.toString(points.toArray()));
-
-        String str = Arrays.toString(points.get(row, col));
-        str = str.replaceAll("[\\[\\](){}\\s]","");
-        System.out.println("str: " + str );
-
-        List<String> coordinates = Arrays.asList(str.split(","));
-        double px = Double.parseDouble(coordinates.get(0));
-        double py = Double.parseDouble(coordinates.get(1));
-
-        System.out.println("Px: "+ px + " Py: " + py);
-        return new Point(px, py);
-    }
-
-
     public static void writeTxtFile(String filename, List<Point> list) throws IOException {
         FileWriter writer = new FileWriter(filename);
         for(Point p: list){
@@ -321,6 +213,7 @@ public class Main {
                 previousPoint.x = p.x;
                 previousPoint.y = p.y;
                 totalPoints.add(p);
+                System.out.println("Add Points: " + p);
                 Imgproc.rectangle(dst, p, new Point(p.x + templ.cols(),
                         p.y + templ.rows()), new Scalar(0, 0, 0), 2, 8, 0);
                 firstrun = false;

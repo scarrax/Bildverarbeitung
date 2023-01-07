@@ -2,12 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="croped image template">
+      <change afterPath="$PROJECT_DIR$/src/TemplateDetection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/MultiMatchTemp.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/MultiMatchTemp.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Bilder/contours4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/contours4.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Bilder/image_output.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_output.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Bilder/image_recangle.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_recangle.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Bilder/result0.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/result0.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maxValues2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/maxValues2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output2.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/totalPoints2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/totalPoints2.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,18 +39,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/Projekt/Java/Bildverarbeitung/Bilder",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Projekt/Java/Bildverarbeitung/Bilder&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projekt\Java\Bildverarbeitung\Bilder" />
@@ -175,7 +181,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672315060047</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="croped image template">
+      <created>1673005553647</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1673005553647</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
