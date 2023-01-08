@@ -13,6 +13,8 @@ public class TemplateDetection {
         this.setImage(image);
     }
 
+    public TemplateDetection(){}
+
     public Mat scaleMat(Mat src){
 
         // Creating an empty matrix to store the result
@@ -103,13 +105,13 @@ public class TemplateDetection {
         System.out.println(p4);
         //Todo: Punkt links oben berechnen, dann die Punkte die auf der x-Achse am weitesten auseinander liegen
         Rect rectCrop = new Rect((int) p2.x, (int) p2.y, (int) (p4.x - p2.x+1), (int) (p4.y-p2.y+1));
-        Imgproc.rectangle (
-                image_original,                    //Matrix obj of the image
-                p4,        //p1
-                p4,       //p2
-                new Scalar(0, 0, 255),     //Scalar object for color
-                5                          //Thickness of the line
-        );
+//        Imgproc.rectangle (
+//                image_original,                    //Matrix obj of the image
+//                p4,        //p1
+//                p4,       //p2
+//                new Scalar(0, 0, 255),     //Scalar object for color
+//                5                          //Thickness of the line
+//        );
         Mat image_output = image_original.submat(rectCrop);
         Imgcodecs.imwrite("Bilder/image_output2.jpg", image_output);
         Imgcodecs.imwrite("Bilder/image_recangle2.jpg", image_original);
