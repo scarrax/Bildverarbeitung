@@ -30,7 +30,7 @@ public class Main {
 
         // new main
         // Bild einlesen
-        String erbsenFile = "Bilder/Erbsen2.jpg";
+        String erbsenFile = "Bilder/Erbsen3.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
 
         TemplateDetection td = new TemplateDetection();

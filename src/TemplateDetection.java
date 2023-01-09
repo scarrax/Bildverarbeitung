@@ -104,7 +104,18 @@ public class TemplateDetection {
         System.out.println(p3);
         System.out.println(p4);
         //Todo: Punkt links oben berechnen, dann die Punkte die auf der x-Achse am weitesten auseinander liegen
-        Rect rectCrop = new Rect((int) p2.x, (int) p2.y, (int) (p4.x - p2.x+1), (int) (p4.y-p2.y+1));
+        int width = (int)coordinateWidth(p1, p2, p3, p4);
+        int height = (int)coordinateHeight(p1, p2, p3, p4);
+        int startCoordinateX = (int)coordinateStartX(p1, p2, p3, p4);
+        int startCoordinateY = (int)coordinateStartY(p1, p2, p3, p4);
+        //System.out.println("Höhe ohne funktion: "+ (p4.y-p2.y+1));
+        System.out.println("StartY ohne funktion: "+ p2.y);
+        Rect rectCrop = new Rect(startCoordinateX, startCoordinateY, width, height);
+
+
+        //System.out.println("Breite ohne funktion: " + (p4.x-p2.x+1));
+
+
 //        Imgproc.rectangle (
 //                image_original,                    //Matrix obj of the image
 //                p4,        //p1
@@ -116,6 +127,61 @@ public class TemplateDetection {
         Imgcodecs.imwrite("Bilder/image_output2.jpg", image_output);
         Imgcodecs.imwrite("Bilder/image_recangle2.jpg", image_original);
         return image_output;
+    }
+
+    public double coordinateWidth(Point p1, Point p2,Point p3,Point p4){
+        double width = 0;
+
+        if(Math.abs(p1.x-p3.x) > width){
+            width = Math.abs(p1.x-p3.x);
+        }else if (Math.abs(p1.x-p4.x) > width){
+            width = Math.abs(p1.x-p4.x);
+        }else if (Math.abs(p2.x-p3.x) > width){
+            width = Math.abs(p2.x-p3.x);
+        }else if (Math.abs(p2.x-p4.x) > width){
+            width = Math.abs(p2.x-p4.x);
+        }
+        System.out.println("Breite: "+width);
+        return width;
+    }
+
+    public double coordinateHeight(Point p1, Point p2,Point p3,Point p4){
+        double height = 0;
+
+        if(Math.abs(p2.y-p1.y) > height){
+            height = Math.abs(p2.y-p1.y);
+        }else if (Math.abs(p2.y-p4.y) > height){
+            height = Math.abs(p2.y-p4.y);
+        }else if (Math.abs(p3.y-p1.y) > height){
+            height = Math.abs(p3.y-p1.y);
+        }else if (Math.abs(p3.y-p4.y) > height){
+            height = Math.abs(p3.y-p4.y);
+        }
+        System.out.println("Höhe: "+height);
+        return height;
+    }
+
+    public double coordinateStartX(Point p1, Point p2,Point p3,Point p4){
+
+        double startX = Math.min(p1.x, p2.x);
+        startX = Math.min(startX, p3.x);
+        startX = Math.min(startX, p4.x);
+
+        System.out.println("StartX: "+startX);
+        // Die Rechteckkoordinaten von den Konturen,können ins negative gehen. Deswegen Prüfen und 0 setzen
+        if(startX < 0) startX=0;
+        return startX;
+    }
+
+    public double coordinateStartY(Point p1, Point p2,Point p3,Point p4){
+        double startY = Math.min(p1.y, p2.y);
+        startY = Math.min(startY, p3.y);
+        startY = Math.min(startY, p4.y);
+
+        System.out.println("StartY: "+startY);
+        // Die Rechteckkoordinaten von den Konturen,können ins negative gehen. Deswegen Prüfen und 0 setzen
+        if(startY < 0) startY=0;
+        return startY;
     }
 
     public Point coordinates(RotatedRect rotatedRect, int row, int col){

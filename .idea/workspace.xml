@@ -3,10 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="class TemplateDetection">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints2.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Bilder/MultiMatchTemp.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/MultiMatchTemp.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/contours4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/contours4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_output2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_output2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_recangle2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_recangle2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/result3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/result3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/detectedPoints.txt" beforeDir="false" afterPath="$PROJECT_DIR$/detectedPoints.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TemplateDetection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TemplateDetection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TemplateMatching.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TemplateMatching.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/totalPoints3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/totalPoints3.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,7 +194,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673132094387</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="class TemplateDetection">
+      <created>1673196664325</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1673196664325</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
