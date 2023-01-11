@@ -51,9 +51,7 @@ public class Main {
                 resultPoints.get("P4"));
 
         template = td.colorToGray(template);
-        /*String fileTemp = "Bilder/ErbseGrey1.jpg";
-        Mat templ = Imgcodecs.imread(fileTemp);
-        templ = convertToGrey(templ); */
+        Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
 
         //template = scalegMat(template);
         Mat dst = td.colorToGray(erbsenMat);

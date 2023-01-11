@@ -3,6 +3,8 @@ import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class TemplateDetection {
@@ -34,7 +36,7 @@ public class TemplateDetection {
         return grayMat;
     }
 
-    public RotatedRect edgeDetection(Mat src){
+    public RotatedRect edgeDetection(Mat src) throws IOException {
 
         // convert into grayscale
         Mat gray = colorToGray(src);
@@ -78,9 +80,14 @@ public class TemplateDetection {
         // Rectangle with larges area
         //Todo: vielleicht mittelwert überalle bilden und die area verwenden
         RotatedRect rotatedRect = findArea(rotatedRectList);
+        System.out.println("Größe?: " + rotatedRect.size.area());
+
+        RotatedRect area = averageArea(rotatedRectList);
+        System.out.println("Area: "+ area.size.area());
+
 
         Imgcodecs.imwrite("Bilder/contours4.jpg", contourMat);
-        return rotatedRect;
+        return area;
     }
 
     public Map<String, Point> templatePoints(RotatedRect rotatedRect){
@@ -111,10 +118,6 @@ public class TemplateDetection {
         //System.out.println("Höhe ohne funktion: "+ (p4.y-p2.y+1));
         System.out.println("StartY ohne funktion: "+ p2.y);
         Rect rectCrop = new Rect(startCoordinateX, startCoordinateY, width, height);
-
-
-        //System.out.println("Breite ohne funktion: " + (p4.x-p2.x+1));
-
 
 //        Imgproc.rectangle (
 //                image_original,                    //Matrix obj of the image
@@ -150,12 +153,16 @@ public class TemplateDetection {
 
         if(Math.abs(p2.y-p1.y) > height){
             height = Math.abs(p2.y-p1.y);
-        }else if (Math.abs(p2.y-p4.y) > height){
+            System.out.println("Höhe2-1: "+height);
+        }if (Math.abs(p2.y-p4.y) > height){
             height = Math.abs(p2.y-p4.y);
-        }else if (Math.abs(p3.y-p1.y) > height){
+            System.out.println("Höhe2-4: "+height);
+        }if (Math.abs(p3.y-p1.y) > height){
             height = Math.abs(p3.y-p1.y);
-        }else if (Math.abs(p3.y-p4.y) > height){
+            System.out.println("Höhe3-1: "+height);
+        }if (Math.abs(p3.y-p4.y) > height){
             height = Math.abs(p3.y-p4.y);
+            System.out.println("Höhe3-4: "+height);
         }
         System.out.println("Höhe: "+height);
         return height;
@@ -208,7 +215,7 @@ public class TemplateDetection {
         Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
         //System.out.println("points + " + Arrays.toString(points.toArray()));
     }
-    public RotatedRect findArea(List<RotatedRect> rotatedRectList){
+    public RotatedRect findArea(List<RotatedRect> rotatedRectList) throws IOException {
         rotatedRectList.sort(new Comparator<RotatedRect>() {
             @Override
             public int compare(RotatedRect o1, RotatedRect o2) {
@@ -216,8 +223,60 @@ public class TemplateDetection {
             }
         });
 
+        // alle Rechteckte mit area 0 entfernen
+        rotatedRectList = removeZeros(rotatedRectList);
+        double averageArea;
+
+
+
+        List<RotatedRect> angleList = new ArrayList<>();
+        for(RotatedRect r: rotatedRectList){
+            if((r.angle == 90) || r.angle < 100 && r.angle > 80){
+                angleList.add(r);
+            }
+        }
+        FileWriter writer = new FileWriter("rotatedRectAllArea0");
+        for(RotatedRect r: rotatedRectList){
+            writer.write(r.size.area() + System.lineSeparator());
+        }
+        writer.close();
         // sorted with larges value first
         return rotatedRectList.get(rotatedRectList.size()-1);
+    }
+
+    public List<RotatedRect> removeZeros(List<RotatedRect> rotatedRectList){
+
+        rotatedRectList.removeIf(r -> r.size.area() == 0);
+
+        return rotatedRectList;
+    }
+
+    public RotatedRect averageArea(List<RotatedRect> rotatedRectList){
+        double mean = 0;
+        double sum = 0;
+
+        rotatedRectList = removeZeros(rotatedRectList);
+
+        for(RotatedRect r: rotatedRectList){
+            sum += r.size.area();
+        }
+        mean = sum/rotatedRectList.size();
+
+        // gucken welches element am nächsten beim mittelwert ist
+        double distance = Math.abs(rotatedRectList.get(0).size.area() - mean);
+        int index = 0;
+        for(int c = 1; c < rotatedRectList.size(); c++){
+            double cdistance = Math.abs(rotatedRectList.get(c).size.area()-mean);
+            if(cdistance < distance){
+                index = c;
+                distance = cdistance;
+            }
+        }
+
+        double finalArea = rotatedRectList.get(index).size.area();
+        RotatedRect rotatedRect = rotatedRectList.get(index);
+        System.out.println("Mittelwert: "+ mean+ " FinalArea: " + finalArea);
+        return rotatedRect;
     }
 
     public Mat getImage() {
