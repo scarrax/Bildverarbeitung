@@ -30,30 +30,19 @@ public class Main {
 
         // new main
         // Bild einlesen
-        String erbsenFile = "Bilder/Erbsen3.jpg";
+        String erbsenFile = "Bilder/Erbsen2.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
 
         TemplateDetection td = new TemplateDetection();
         erbsenMat = td.scaleMat(erbsenMat);
-        RotatedRect rotatedRect = td.edgeDetection(erbsenMat);
-
-        Map<String, Point> resultPoints = td.templatePoints(rotatedRect);
-        System.out.println("P1 "+resultPoints.get("P1"));
-        System.out.println("P2 "+resultPoints.get("P2"));
-        System.out.println("P3 "+resultPoints.get("P3"));
-        System.out.println("P4 "+resultPoints.get("P4"));
+        Rect rect = td.edgeDetection(erbsenMat);
 
         Mat template = new Mat();
-        template = td.cropTemplate(erbsenMat,
-                resultPoints.get("P1"),
-                resultPoints.get("P2"),
-                resultPoints.get("P3"),
-                resultPoints.get("P4"));
+        template = td.cropTemplate(erbsenMat, rect);
 
         template = td.colorToGray(template);
         Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
 
-        //template = scalegMat(template);
         Mat dst = td.colorToGray(erbsenMat);
 
         double threshold = 0.85;

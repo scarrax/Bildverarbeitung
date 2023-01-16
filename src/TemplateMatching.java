@@ -87,7 +87,7 @@ public class TemplateMatching {
         return detectedPoints;
     }
 
-    //Todo: noch fehler drin, muss verbessert werden. Es werden zu viele Rechecke gelöscht die valid sind
+
     public List<Point> removeNearPoints(List<Point> listPoints, Mat srcImage, Mat templateImage) throws IOException {
         // sortList(listPoints);
         System.out.println("ListofPoints: " + listPoints);
