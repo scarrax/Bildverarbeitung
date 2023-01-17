@@ -24,36 +24,43 @@ public class Main {
     public static void main(String[] args) throws Exception {
         initialiseOpenCv();
 
-        // Reading the Image from the file and storing it in to a Matrix object
-        String file = "Bilder/Erbsen.jpg";
-        Mat image = Imgcodecs.imread(file);
-
-        // new main
         // Bild einlesen
         String erbsenFile = "Bilder/Erbsen2.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
 
         TemplateDetection td = new TemplateDetection();
+
+        // Bild verkleinern
         erbsenMat = td.scaleMat(erbsenMat);
+        // Rückgabewer ist ein Rechteck, wird benötig um das Template auszuschneiden
         Rect rect = td.edgeDetection(erbsenMat);
 
+        // Template aus dem Originalbild ausschneiden
         Mat template = new Mat();
         template = td.cropTemplate(erbsenMat, rect);
 
+        // Templatefarbe in grau umwandeln
         template = td.colorToGray(template);
         Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
 
+        // Originalbild in grau umwandeln
         Mat dst = td.colorToGray(erbsenMat);
 
+        // Threshold wählen, 0.85 funktioniert für die bisherigen Tests gut
         double threshold = 0.85;
         TemplateMatching tm = new TemplateMatching();
+        // Rückgabewert ist eine Liste von Points wo der maxValue >= threshold ist.
+        // als Methode wird TM_CCOOEDD_NORMED verwendet, diese funktioniert mit dem maxValue
         List<Point> detectedPoints = tm.detectTemplate(dst,template, threshold);
+        // Es werden überlappende Punkte gefunden, in python wäre die Lösung groupRectangles
+        // Hier eine selbstgeschriebene alternative für Java
         List totalPoints = tm.removeNearPoints(detectedPoints, dst, template);
 
+        // Speichert der gefundenen Punkte und der Punkte, nachdem entfernen der Überlappungen
         writeTxtFile("detectedPoints.txt", detectedPoints);
         writeTxtFile("totalPoints3.txt", totalPoints);
 
-
+        // Zum Anzeigen der Gefunden Objekte muss die Matrix in ein BufferedImage konvertiert werden
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
     }
