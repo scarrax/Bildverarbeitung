@@ -11,12 +11,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ *
+ */
 public class TemplateDetection {
 
+    /**
+     * Class constructor.
+     */
     public TemplateDetection() {
     }
 
-    // Verkleinern das Originalbild um die hälfte
+    /**
+     * Originalbild wird um die hälfte verkleinert
+     * @param src Originalbild
+     * @return    Originalbild halbiert
+     */
     public Mat scaleMat(Mat src) {
 
         // Creating an empty matrix to store the result
@@ -29,7 +39,11 @@ public class TemplateDetection {
         return dst;
     }
 
-    // Umwandeln der Farbmatrix zu grau
+    /**
+     * Umwandeln in ein Graustufenbild
+     * @param src Originalbild
+     * @return    Graustufenbild
+     */
     public Mat colorToGray(Mat src) {
         // convert into gray image
         Mat grayMat = new Mat();

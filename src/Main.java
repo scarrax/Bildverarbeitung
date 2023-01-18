@@ -2,7 +2,6 @@
 import org.opencv.core.*;
 
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 
 import javax.imageio.ImageIO;
@@ -16,55 +15,77 @@ import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
 import java.util.List;
 
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        /**
+         * OpenCV Initialisieren
+         */
         initialiseOpenCv();
 
-        // Bild einlesen
+        /**
+         * Bild als Mat einlesen
+         */
         String erbsenFile = "Bilder/Erbsen2.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
 
+        /**
+         * Bild vorbereiten für TemplateDetection.
+         * Aufruf edgeDetection für das Rechteck welches im nächsten Schritt benötigt wird.
+         * Aufruf cropTemplate um das Template zu erhalten.
+         * Template in Graustufenbild konvertieren.
+         * Originalbild in Graustufenbild konvertieren.
+         */
         TemplateDetection td = new TemplateDetection();
-
-        // Bild verkleinern
         erbsenMat = td.scaleMat(erbsenMat);
-        // Rückgabewer ist ein Rechteck, wird benötig um das Template auszuschneiden
         Rect rect = td.edgeDetection(erbsenMat);
-
-        // Template aus dem Originalbild ausschneiden
-        Mat template = new Mat();
-        template = td.cropTemplate(erbsenMat, rect);
-
-        // Templatefarbe in grau umwandeln
+        Mat template = td.cropTemplate(erbsenMat, rect);
         template = td.colorToGray(template);
-        Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
-
-        // Originalbild in grau umwandeln
         Mat dst = td.colorToGray(erbsenMat);
 
-        // Threshold wählen, 0.85 funktioniert für die bisherigen Tests gut
+        Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
+
+
+
+        /**
+         * Threshold wählen, 0.85 funktioniert für die bisherigen Tests gut
+         */
         double threshold = 0.85;
         TemplateMatching tm = new TemplateMatching();
-        // Rückgabewert ist eine Liste von Points wo der maxValue >= threshold ist.
-        // als Methode wird TM_CCOOEDD_NORMED verwendet, diese funktioniert mit dem maxValue
-        List<Point> detectedPoints = tm.detectTemplate(dst,template, threshold);
-        // Es werden überlappende Punkte gefunden, in python wäre die Lösung groupRectangles
-        // Hier eine selbstgeschriebene alternative für Java
-        List totalPoints = tm.removeNearPoints(detectedPoints, dst, template);
 
-        // Speichert der gefundenen Punkte und der Punkte, nachdem entfernen der Überlappungen
+        /**
+         * Rückgabewert ist eine Liste von Points wo der maxValue >= threshold ist.
+         * Als Methode wird TM_CCOOEDD_NORMED verwendet, diese funktioniert mit dem maxValue.
+         */
+        List<Point> detectedPoints = tm.detectTemplate(dst,template, threshold);
+        /**
+         * Es werden überlappende Punkte gefunden, in python wäre die Lösung groupRectangles.
+         */
+        List<Point> totalPoints = tm.removeNearPoints(detectedPoints, dst, template);
+
+        /**
+         * Speichert der gefundenen Punkte und der Punkte, nachdem entfernen der Überlappungen.
+         */
         writeTxtFile("detectedPoints.txt", detectedPoints);
         writeTxtFile("totalPoints3.txt", totalPoints);
 
-        // Zum Anzeigen der Gefunden Objekte muss die Matrix in ein BufferedImage konvertiert werden
+
+        /**
+         * Zum Anzeigen der gefundenen Objekte muss die Matrix in ein BufferedImage konvertiert werden.
+         */
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
     }
 
+    /**
+     * Zum Speichern von Textdateien.
+     *
+     * @param filename     Textdateiname
+     * @param list         Liste von Punkten
+     * @throws IOException
+     */
     public static void writeTxtFile(String filename, List<Point> list) throws IOException {
         FileWriter writer = new FileWriter(filename);
         for(Point p: list){
@@ -73,14 +94,22 @@ public class Main {
         writer.close();
     }
 
-    // Für debugging Zwecke
+    /**
+     * Laden der OpenCV Library.
+     */
     public static void initialiseOpenCv(){
-        // Loading the OpenCV core library
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         System.out.println(Core.VERSION);
         System.out.println("load success");
     }
 
+    /**
+     * Konvertieren der Matrix zu ein BufferedImage, wird zum Anzeigen benötigt
+     *
+     * @param image      Mat Bild
+     * @return           BufferedImage
+     * @throws Exception
+     */
     public static BufferedImage convertMatToBufImg(Mat image) throws Exception{
 
         // instantiating an empty MatOfByte class
@@ -101,6 +130,11 @@ public class Main {
         return bufImage;
     }
 
+    /**
+     * Bild anzeigen
+     *
+     * @param bufImage Bufferedimage Bild
+     */
     public static void displayImage(BufferedImage bufImage){
 
         // Instantiate JFrame
