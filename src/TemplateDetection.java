@@ -13,95 +13,107 @@ import java.util.*;
 
 public class TemplateDetection {
 
-    private Mat image;
-
-    public TemplateDetection(Mat image){
-        this.setImage(image);
+    public TemplateDetection() {
     }
 
-    public TemplateDetection(){}
-
-    public Mat scaleMat(Mat src){
+    // Verkleinern das Originalbild um die hälfte
+    public Mat scaleMat(Mat src) {
 
         // Creating an empty matrix to store the result
         Mat dst = new Mat();
         // Creating the Size object
-        Size size = new Size(src.cols()*0.5, src.rows()*0.5);
+        Size size = new Size(src.cols() * 0.5, src.rows() * 0.5);
         // Scaling the Image
-        Imgproc.resize(src, dst, size, 0,0, Imgproc.INTER_AREA);
+        Imgproc.resize(src, dst, size, 0, 0, Imgproc.INTER_AREA);
         System.out.println("rescaled");
         return dst;
     }
 
-
-
-    public Mat colorToGray(Mat src){
+    // Umwandeln der Farbmatrix zu grau
+    public Mat colorToGray(Mat src) {
         // convert into gray image
         Mat grayMat = new Mat();
         Imgproc.cvtColor(src, grayMat, Imgproc.COLOR_BGR2GRAY);
         return grayMat;
     }
 
+    /**
+     * Rect edgeDetection(Mat src)
+     *
+     * Zusammenfassung der edgeDetection Funktion:
+     *
+     *    Sucht das Rechteck welches am besten für das Template geeignet ist
+     *
+     * @param src Mat Originalbild
+     * @return    Rechteck
+     */
     public Rect edgeDetection(Mat src) throws IOException {
 
-        // convert into grayscale
+        /**
+         * Umwandel in ein Graustufenbild
+         */
         Mat gray = colorToGray(src);
 
-        // Gaussian Blur
+        /**
+         * Gaussian Blur
+         * Kernel von 3x3 funktioniert für die Tests gut, mit sigmaX Wert von 1
+         */
         Mat blur = new Mat();
-        Imgproc.GaussianBlur(gray, blur, new Size(3,3), 1);
+        Imgproc.GaussianBlur(gray, blur, new Size(3, 3), 1);
         Imgcodecs.imwrite("Bilder/Blur7x7x1.jpg", blur);
 
-        // Detecting the edges
+        /**
+         * Kantenbild
+         * Canny threshold Werte: sollten im Verhältnis von 1:2 oder 1:3 sein (lower:upper)
+         * Kernel Size von 3, siehe Dokumentation
+         */
         Mat edges = new Mat();
         Imgproc.Canny(blur, edges, 75, 150,3);
         Imgcodecs.imwrite("Bilder/canny.jpg", edges);
 
-        // find contours
+
+        /**
+         * Kantenfinden
+         * RETR_EXTERNAL wird verwendet, da es die Außenkontur gibt.
+         * CHAIN_APPROX_SIMPLE wird verwendet, spart viel Speicher.
+         */
         List<MatOfPoint> contours = new ArrayList<>();
-        Point contour_line = new Point();
         Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //Imgcodecs.imwrite("Bilder/drawcontours3.jpg", MoP2f);
+        //Imgcodecs.imwrite("Bilder/drawcontours3.jpg", edges);
         System.out.println("Hierarch elementsize: " + hierarchy.elemSize());
 
-        // Draw contours in contourMat
+        /**
+         * Zeichne die Konturen
+         * contourIdx: -1, damit alle Konturen eingezeichnet werden
+         */
         Mat contourMat = Mat.zeros(gray.size(), CvType.CV_8UC3);
-        Scalar white = new Scalar(255, 255, 255);
+        Scalar white = new Scalar(255, 0, 255);
         Imgproc.drawContours(contourMat, contours, -1, white);
-
         Imgcodecs.imwrite("Bilder/drawcontours1.jpg", contourMat);
 
-        for(int i = 0; i < contours.size(); i++){
-            System.out.println("contourmat: " + contours.get(i).size().area());
-            if(contours.get(i).size().area() > 80){
-                Imgproc.drawContours(contourMat, contours, i, new Scalar(0,255,0), -1);
-            }
-        }
-        Imgcodecs.imwrite("Bilder/drawcontours2.jpg", contourMat);
-
-        // fill
-        for(MatOfPoint contour: contours){
-            Imgproc.fillPoly(contourMat, Arrays.asList(contour), white);
+        /**
+         * Füllen von Polygon
+         */
+        for (MatOfPoint contour : contours) {
+            Imgproc.fillPoly(contourMat, Collections.singletonList(contour), white);
         }
         Imgcodecs.imwrite("Bilder/filled2.jpg", contourMat);
 
-        //Creating destination matrix
-
-        //Preparing the kernel matrix object
         /*
         Mat kernel = Mat.ones(5,5, CvType.CV_32F);
         Imgproc.morphologyEx(contourMat, contourMat, Imgproc.MORPH_OPEN, kernel);
         Imgcodecs.imwrite("Bilder/morphOpen.jpg", contourMat);
         */
 
-        // Draw rectangle around the contours
-        Scalar green = new Scalar(81,180,0);
-        List<RotatedRect> rotatedRectList = new ArrayList<RotatedRect>();
+        /**
+         * Rechtecke um die gefundenen Konturen einzeichnen.
+         */
+        Scalar green = new Scalar(81, 180, 0);
         List<Rect> rectList = new ArrayList<>();
 
-        for(MatOfPoint contour: contours){
+        for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(new MatOfPoint2f(contour.toArray()));
             rectList.add(rect);
             Imgproc.rectangle(contourMat, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), green, 2);
@@ -109,20 +121,22 @@ public class TemplateDetection {
         Imgcodecs.imwrite("Bilder/rect3.jpg", contourMat);
 
 
-
-        //Todo: vielleicht mittelwert überalle bilden und die area verwenden
-        //RotatedRect rotatedRect = findArea(rotatedRectList);
-        //System.out.println("Größe?: " + rotatedRect.size.area());
-
         Rect area = averageArea(rectList);
-        System.out.println("Area: "+ area.area());
-
+        System.out.println("Area: " + area.area());
 
         Imgcodecs.imwrite("Bilder/contours4.jpg", contourMat);
         return area;
     }
 
-    public Mat cropTemplate(Mat image_original, Rect rect){
+
+    /**
+     * Schneidet das Template aus dem Originalbild aus.
+     *
+     * @param image_original Originalbild
+     * @param rect           Rechteck welches zuvor in edgeDetection bestimmt wurde.
+     * @return               Template welches für TemplateMatching und später für Tensorflow benötigt wird.
+     */
+    public Mat cropTemplate(Mat image_original, Rect rect) {
 
         Mat image_output = image_original.submat(rect);
         Imgcodecs.imwrite("Bilder/image_output2.jpg", image_output);
@@ -130,30 +144,45 @@ public class TemplateDetection {
         return image_output;
     }
 
-    public List<Rect> removeZeros(List<Rect> rectList){
+    /**
+     * Entfernt alle Flächen mit dem Wert 0.
+     *
+     * @param rectList Liste von allen gefundenen Rechtecken
+     * @return         Liste ohne Werte, die Fläche 0 haben
+     */
+    public List<Rect> removeZeros(List<Rect> rectList) {
 
         rectList.removeIf(r -> r.area() == 0);
 
         return rectList;
     }
 
-    public Rect averageArea(List<Rect> rectList){
+    /**
+     * Berechnet die Durchschnittsfläche der Rechtecke
+     * Sucht das Rechteck welches am besten zum Mittelwert passt
+     *
+     * @param rectList Liste von allen gefundenen Rechtecken
+     * @return         Rechteck von welchem die Flache am besten zum Mittelwert passt
+     */
+    public Rect averageArea(List<Rect> rectList) {
         double mean = 0;
         double sum = 0;
 
         rectList = removeZeros(rectList);
 
-        for(Rect r: rectList){
+        for (Rect r : rectList) {
             sum += r.area();
         }
-        mean = sum/rectList.size();
+        mean = sum / rectList.size();
 
-        // gucken welches element am nächsten beim mittelwert ist
+        /**
+         * Prüfuen welches Rechteck am nächsten beim Mittelwert ist
+         */
         double distance = Math.abs(rectList.get(0).area() - mean);
         int index = 0;
-        for(int c = 1; c < rectList.size(); c++){
-            double cdistance = Math.abs(rectList.get(c).area()-mean);
-            if(cdistance < distance){
+        for (int c = 1; c < rectList.size(); c++) {
+            double cdistance = Math.abs(rectList.get(c).area() - mean);
+            if (cdistance < distance) {
                 index = c;
                 distance = cdistance;
             }
@@ -161,15 +190,7 @@ public class TemplateDetection {
 
         double finalArea = rectList.get(index).area();
         Rect rect = rectList.get(index);
-        System.out.println("Mittelwert: "+ mean+ " FinalArea: " + finalArea);
+        System.out.println("Mittelwert: " + mean + " FinalArea: " + finalArea);
         return rect;
-    }
-
-    public Mat getImage() {
-        return image;
-    }
-
-    public void setImage(Mat image) {
-        this.image = image;
     }
 }
