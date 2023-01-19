@@ -10,63 +10,94 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Alle Funktionen für Matching Template
+ *
+ * @author  Niklas Hübner
+ * @version 1.0
+ */
 public class TemplateMatching {
-    private double threshold;
-    private Mat srcImage;
-    private Mat templateImage;
 
-    public TemplateMatching(Mat srcImage, Mat templateImage, double threshold){
-        this.setSrcImage(srcImage);
-        this.setTemplateImage(templateImage);
-        this.setThreshold(threshold);
-    }
-
+    /**
+     * Class constructor.
+     */
     public TemplateMatching(){}
 
+    /**
+     * Finden von übereinstimmungen vom Template und dem Originalbild.
+     *
+     * @param srcImage      Originalbild
+     * @param templateImage Template (das gesuchte Bild)
+     * @param threshold     Wie genau das Template auf die Region im Originalbild passen muss
+     * @return              List von Punkten wo eine Übereinstimmung von Originalbild und Template ist
+     */
     public List<Point> detectTemplate(Mat srcImage, Mat templateImage, double threshold){
 
+        /**
+         * Variablen Deklaration
+         */
         List<Point> detectedPoints = new ArrayList<Point>();
         List<Double> detectedValue = new ArrayList<>();
         Point matchLoc;
         double maxvalue;
         Mat dst = srcImage.clone();
 
-        // result matrix
+        /**
+         * Deklaration der Mat resultMat
+         */
         int result_cols = srcImage.cols() - templateImage.cols() + 1;
         int result_rows = srcImage.rows() - templateImage.rows() + 1;
-        Mat resultMat = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+        Mat resultMat = new Mat();
+        //Mat resultMat = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+        resultMat.create(result_rows, result_cols, CvType.CV_32FC1);
 
-
+        /**
+         * Erster durchlauf um zu Prüfen, ob das Template im Originalbild ist.
+         * TM_CCOEFF_NORMED liefert das beste Ergebnis beim max value.
+         * matchLoc gibt den aktuellen Punkt an für das maxValue.
+         * maxvalue in Range (0,1) gibt an wie gut das Template mit dem Punkt übereinstimmt.
+         * Lokalisieren der minimum und maximum Werte in der Result Matrix mit Core.minMaxLoc
+         */
         Imgproc.matchTemplate(dst, templateImage, resultMat, Imgproc.TM_CCOEFF_NORMED);
         Core.normalize(resultMat, resultMat, 0, 1, Core.NORM_MINMAX, -1, new Mat());
         Core.MinMaxLocResult mmr = Core.minMaxLoc(resultMat);
         matchLoc = mmr.maxLoc;
         maxvalue = mmr.maxVal;
-
-
+        //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);
+        /**
+         * Gefunden Werte den entsprechenden Listen hinzufügen.
+         */
         detectedPoints.add(matchLoc);
         detectedValue.add(maxvalue);
         System.out.println("List of points " + detectedPoints);
         System.out.println("List of maxvalue " + detectedValue);
 
 
+        /**
+         * Einzeichnen vom Rechteck an der Location von matchLoc,
+         * im Originalbild und in der result Matrix.
+         */
         //Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(),
         //        matchLoc.y + templateImage.rows()), new Scalar(0, 0, 0), 2, 8, 0);
         Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
-                new Scalar(0, 255, 0), 1, 8, 0);
+                new Scalar(0, 0, 0), 2, 8, 0);
+        //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);
 
-
+        /**
+         * Schleife wird so lange durchlaufen bis der maximal Wert unter dem threshold ist.
+         * Der maximal Wert wird mit jedem Durchlauf kleiner.
+         */
         while(true){
             mmr = Core.minMaxLoc(resultMat);
             matchLoc = mmr.maxLoc;
             maxvalue = mmr.maxVal;
+            System.out.println("mmr: " + maxvalue);
 
             if(maxvalue >= threshold){
                 detectedPoints.add(matchLoc);
                 detectedValue.add(maxvalue);
 
                 //System.out.println("Template Matches with input image");
-                // Rectangle all objects over the threshold in the original image
                 Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(),matchLoc.y + templateImage.rows()),
                        new Scalar(0,255,0), 1,8,0);
                 Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(),matchLoc.y + templateImage.rows()),
@@ -75,7 +106,6 @@ public class TemplateMatching {
                 break;
             }
         }
-
 
         resultMat.convertTo(resultMat, CvType.CV_8UC1, 255.0);
 
@@ -87,34 +117,37 @@ public class TemplateMatching {
         return detectedPoints;
     }
 
-
+    /**
+     * Entfernen von überlappenden Rechtecken.
+     *
+     * @param listPoints    Liste von Punkten, alle Punkte die über den threshold liegen.
+     * @param srcImage      Originalbild
+     * @param templateImage Template, um die finalen Rechtecke einzuzeichnen.
+     * @return              Liste von Punkten ohne Überlappungen.
+     * @throws IOException
+     */
     public List<Point> removeNearPoints(List<Point> listPoints, Mat srcImage, Mat templateImage) throws IOException {
-        // sortList(listPoints);
         System.out.println("ListofPoints: " + listPoints);
 
-        FileWriter writer = new FileWriter("ListOfPoints2Sortiert");
-        for(Point p: listPoints){
-            writer.write(p + System.lineSeparator());
-        }
-        writer.close();
-
-
-        // entfernen zu naher Koordinaten
-        Point previousPoint = new Point();
-        List<Point> totalPoints = new ArrayList<Point>();
-
-        // Startkoordinaten
-        previousPoint.x = listPoints.get(0).x;
-        previousPoint.y = listPoints.get(0).y;
+        /**
+         * Startpunkte
+         */
+        List<Point> totalPoints = new ArrayList<>();
         totalPoints.add(listPoints.get(0));
         System.out.println("Add Points: " + listPoints.get(0));
-        Imgproc.rectangle(srcImage, listPoints.get(0), new Point(previousPoint.x + templateImage.cols(),
-                previousPoint.y + templateImage.rows()), new Scalar(0, 0, 0), 1, 8, 0);
+        Imgproc.rectangle(srcImage, listPoints.get(0), new Point(listPoints.get(0).x + templateImage.cols(),
+                listPoints.get(0).y + templateImage.rows()), new Scalar(0, 0, 0), 1, 8, 0);
 
 
         String file5 = "Bilder/firstRectangle.jpg";
         Imgcodecs.imwrite(file5, srcImage);
 
+        /**
+         * Entfernen von zu naher Rechtecke.
+         * Es wird überprüft, ob der aktuelle Punkt in einer Distanz zu einem anderen Punkt liegt.
+         * Wenn inDistance true ist, ist der Wert ok und liegt außerhalb der vereinbarten Distanz
+         * distance auf 20, funktioniert für die meisten Testversuche.
+         */
         boolean inDistance = false;
         double distance = 20;
         for(Point p: listPoints.subList(1, listPoints.size())){
@@ -130,12 +163,10 @@ public class TemplateMatching {
             }
             if(inDistance){
                 totalPoints.add(p);
-                //System.out.println("Add Points: " + p);
                 Imgproc.rectangle(srcImage, p, new Point(p.x + templateImage.cols(),
                         p.y + templateImage.rows()), new Scalar(0, 0, 0), 1, 8, 0);
                 System.out.println("nicht gleiche werte: "+ p.x+ " " + p.y);
                 System.out.println("totalpointssize: " + totalPoints.size());
-                //Collections.reverse(totalPoints);
             }
 
         }
@@ -151,52 +182,5 @@ public class TemplateMatching {
 
         System.out.println("Es wurden: " + totalPoints.size() + " Objekte gefunden.");
         return totalPoints;
-    }
-
-    public static void groupRectangles(MatOfRect rectList, MatOfInt weights, int groupThreshold){
-
-        Mat rectList_mat = rectList;
-        Mat weights_mat = weights;
-        groupRectangles_1(rectList_mat.nativeObj, weights_mat.nativeObj, groupThreshold);
-
-        return;
-    }
-    private static native void groupRectangles_1(long rectList_mat_nativeObj, long weights_mat_nativeObj, int groupThreshold);
-
-    public void sortList(List<Point> listPoints){
-        // Liste sortieren
-        listPoints.sort(new Comparator<Point>() {
-            @Override
-            public int compare(Point o1, Point o2) {
-                int result = Double.compare(o1.x, o2.x);
-                if (result == 0) result = Double.compare(o1.y, o2.y);
-                return result;
-            }
-        });
-    }
-
-
-    public double getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(double threshold) {
-        this.threshold = threshold;
-    }
-
-    public Mat getSrcImage() {
-        return srcImage;
-    }
-
-    public void setSrcImage(Mat srcImage) {
-        this.srcImage = srcImage;
-    }
-
-    public Mat getTemplateImage() {
-        return templateImage;
-    }
-
-    public void setTemplateImage(Mat templateImage) {
-        this.templateImage = templateImage;
     }
 }

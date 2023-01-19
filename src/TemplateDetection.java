@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * Funktionen zum Erstellen für das Template
  *
+ * @author  Niklas Hübner
+ * @version 1.0
  */
 public class TemplateDetection {
 
