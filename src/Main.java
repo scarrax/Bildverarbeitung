@@ -34,7 +34,7 @@ public class Main {
         /**
          * Bild als Mat einlesen
          */
-        String erbsenFile = "Bilder/Erbsen2.jpg";
+        String erbsenFile = "Bilder/Erbsen4.jpg";
         Mat erbsenMat = Imgcodecs.imread(erbsenFile);
 
         /**
@@ -58,7 +58,7 @@ public class Main {
         /**
          * Threshold wählen, 0.85 funktioniert für die bisherigen Tests gut
          */
-        double threshold = 0.85;
+        double threshold = 0.6;
         TemplateMatching tm = new TemplateMatching();
 
         /**

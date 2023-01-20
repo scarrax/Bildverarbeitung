@@ -35,9 +35,11 @@ public class TemplateDetection {
         // Creating an empty matrix to store the result
         Mat dst = new Mat();
         // Creating the Size object
-        Size size = new Size(src.cols() * 0.5, src.rows() * 0.5);
+        //Size size = new Size(src.cols() * 0.5, src.rows() * 0.5);
+        Size size = new Size(150,150);
         // Scaling the Image
         Imgproc.resize(src, dst, size, 0, 0, Imgproc.INTER_AREA);
+        //Imgcodecs.imwrite("Bilder/rescaled5.jpg", dst);
         System.out.println("rescaled");
         return dst;
     }
@@ -76,7 +78,7 @@ public class TemplateDetection {
          * Kernel von 3x3 funktioniert für die Tests gut, mit sigmaX Wert von 1
          */
         Mat blur = new Mat();
-        Imgproc.GaussianBlur(gray, blur, new Size(3, 3), 1);
+        Imgproc.GaussianBlur(gray, blur, new Size(3, 3), 0);
         Imgcodecs.imwrite("Bilder/Blur7x7x1.jpg", blur);
 
         /**
