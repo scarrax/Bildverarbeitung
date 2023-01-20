@@ -28,7 +28,7 @@ public class TemplateDetection {
     /**
      * Originalbild wird um die hälfte verkleinert
      * @param src Originalbild
-     * @return    Originalbild halbiert
+     * @return    Originalbild (150,150)
      */
     public Mat scaleMat(Mat src) {
 
