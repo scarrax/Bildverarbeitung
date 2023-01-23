@@ -2,7 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdce1090-3e42-4563-af4e-d144913b501b" name="Changes" comment="scaleMat auf 150,150 gesetzt">
-      <change beforePath="$PROJECT_DIR$/src/TemplateDetection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TemplateDetection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/goldfisch1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/lemons1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/lemons2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/oranges1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/oranges2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/pineapple1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Bilder/stift1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/AfterRemoveNearPoints2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/Blur7x7x1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/Blur7x7x1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/MultiMatchTemp2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/MultiMatchTemp2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/canny.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/canny.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/contours4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/contours4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/drawcontours1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/drawcontours1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/filled2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/filled2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/firstRectangle.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/firstRectangle.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_output2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_output2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/image_recangle2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/image_recangle2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/rect3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/rect3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/result4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/result4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bilder/templategrey1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Bilder/templategrey1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ListOfTotalPoints2Sortiert" beforeDir="false" afterPath="$PROJECT_DIR$/ListOfTotalPoints2Sortiert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/detectedPoints.txt" beforeDir="false" afterPath="$PROJECT_DIR$/detectedPoints.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TemplateMatching.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TemplateMatching.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/totalPoints3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/totalPoints3.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,20 +53,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Projekt/Java/Bildverarbeitung/Bilder&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Projekt/Java/ImageProcessingAlg/Bilder",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projekt\Java\ImageProcessingAlg\Bilder" />
       <recent name="D:\Projekt\Java\Bildverarbeitung\Bilder" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -254,7 +280,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674212009684</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="scaleMat auf 150,150 gesetzt">
+      <created>1674212037370</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1674212037370</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

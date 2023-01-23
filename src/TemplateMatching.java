@@ -77,8 +77,8 @@ public class TemplateMatching {
          * Einzeichnen vom Rechteck an der Location von matchLoc,
          * im Originalbild und in der result Matrix.
          */
-        //Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(),
-        //        matchLoc.y + templateImage.rows()), new Scalar(0, 0, 0), 2, 8, 0);
+        Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(),
+                matchLoc.y + templateImage.rows()), new Scalar(0, 0, 0), 2, 8, 0);
         Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
                 new Scalar(0, 0, 0), 2, 8, 0);
         //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);

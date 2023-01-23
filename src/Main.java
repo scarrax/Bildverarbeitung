@@ -34,8 +34,8 @@ public class Main {
         /**
          * Bild als Mat einlesen
          */
-        String erbsenFile = "Bilder/Erbsen4.jpg";
-        Mat erbsenMat = Imgcodecs.imread(erbsenFile);
+        String imgFile = "Bilder/stift1.jpg";
+        Mat imgMat = Imgcodecs.imread(imgFile);
 
         /**
          * Bild vorbereiten für TemplateDetection.
@@ -45,20 +45,20 @@ public class Main {
          * Originalbild in Graustufenbild konvertieren.
          */
         TemplateDetection td = new TemplateDetection();
-        erbsenMat = td.scaleMat(erbsenMat);
-        Rect rect = td.edgeDetection(erbsenMat);
-        Mat template = td.cropTemplate(erbsenMat, rect);
+        imgMat = td.scaleMat(imgMat);
+        Rect rect = td.edgeDetection(imgMat);
+        Mat template = td.cropTemplate(imgMat, rect);
         template = td.colorToGray(template);
-        Mat dst = td.colorToGray(erbsenMat);
+        Mat dst = td.colorToGray(imgMat);
 
         Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
 
 
 
         /**
-         * Threshold wählen, 0.85 funktioniert für die bisherigen Tests gut
+         * Threshold wählen, 0.6-0.85 funktioniert für die bisherigen Tests gut
          */
-        double threshold = 0.6;
+        double threshold = 0.7;
         TemplateMatching tm = new TemplateMatching();
 
         /**
@@ -118,7 +118,6 @@ public class Main {
      */
     public static BufferedImage convertMatToBufImg(Mat image) throws Exception{
 
-        // instantiating an empty MatOfByte class
         MatOfByte matOfByte = new MatOfByte();
 
         // Converting the Mat object to MatOfByte
@@ -143,7 +142,6 @@ public class Main {
      */
     public static void displayImage(BufferedImage bufImage){
 
-        // Instantiate JFrame
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
