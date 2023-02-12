@@ -51,6 +51,7 @@ public class TemplateMatching {
         //Mat resultMat = new Mat(result_rows, result_cols, CvType.CV_32FC1);
         resultMat.create(result_rows, result_cols, CvType.CV_32FC1);
 
+
         /**
          * Erster durchlauf um zu Prüfen, ob das Template im Originalbild ist.
          * TM_CCOEFF_NORMED liefert das beste Ergebnis beim max value.
@@ -63,6 +64,8 @@ public class TemplateMatching {
         Core.MinMaxLocResult mmr = Core.minMaxLoc(resultMat);
         matchLoc = mmr.maxLoc;
         maxvalue = mmr.maxVal;
+        String file6 = "Bilder/result6.jpg";
+        Imgcodecs.imwrite(file6, resultMat);
         //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);
         /**
          * Gefunden Werte den entsprechenden Listen hinzufügen.
@@ -81,7 +84,7 @@ public class TemplateMatching {
                 matchLoc.y + templateImage.rows()), new Scalar(0, 0, 0), 2, 8, 0);
         Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
                 new Scalar(0, 0, 0), 2, 8, 0);
-        //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);
+        Imgcodecs.imwrite("Bilder/resultMat2.jpg", resultMat);
 
         /**
          * Schleife wird so lange durchlaufen bis der maximal Wert unter dem threshold ist.

@@ -100,7 +100,7 @@ public class TemplateDetection {
         Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //Imgcodecs.imwrite("Bilder/drawcontours3.jpg", edges);
+        Imgcodecs.imwrite("Bilder/drawcontours3.jpg", edges);
         System.out.println("Hierarch elementsize: " + hierarchy.elemSize());
 
         /**

@@ -2,6 +2,7 @@
 import org.opencv.core.*;
 
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.highgui.HighGui;
 
 
 import javax.imageio.ImageIO;
@@ -34,7 +35,7 @@ public class Main {
         /**
          * Bild als Mat einlesen
          */
-        String imgFile = "Bilder/stift1.jpg";
+        String imgFile = "Bilder/pineapple1.jpg";
         Mat imgMat = Imgcodecs.imread(imgFile);
 
         /**
@@ -81,6 +82,8 @@ public class Main {
         /**
          * Zum Anzeigen der gefundenen Objekte muss die Matrix in ein BufferedImage konvertiert werden.
          */
+        HighGui.imshow("Image", template);
+        HighGui.waitKey(0);
         BufferedImage image2 = convertMatToBufImg(dst);
         displayImage(image2);
     }
