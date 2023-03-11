@@ -22,6 +22,12 @@ public class TemplateDetection {
     /**
      * Class constructor.
      */
+
+
+    // Verbesserungen:
+    // constructor auf private ändern
+    // funktionen auf static
+    // klasse auf final machen
     public TemplateDetection() {
     }
 
@@ -87,6 +93,7 @@ public class TemplateDetection {
          * Kernel Size von 3, siehe Dokumentation
          */
         Mat edges = new Mat();
+        //todo: threshold1/threshold2 konstant machen
         Imgproc.Canny(blur, edges, 75, 150,3);
         Imgcodecs.imwrite("Bilder/canny.jpg", edges);
 
@@ -151,16 +158,16 @@ public class TemplateDetection {
     /**
      * Schneidet das Template aus dem Originalbild aus.
      *
-     * @param image_original Originalbild
+     * @param imageOriginal Originalbild
      * @param rect           Rechteck welches zuvor in edgeDetection bestimmt wurde.
      * @return               Template welches für TemplateMatching und später für Tensorflow benötigt wird.
      */
-    public Mat cropTemplate(Mat image_original, Rect rect) {
+    public Mat cropTemplate(Mat imageOriginal, Rect rect) {
 
-        Mat image_output = image_original.submat(rect);
-        Imgcodecs.imwrite("Bilder/image_output2.jpg", image_output);
-        Imgcodecs.imwrite("Bilder/image_recangle2.jpg", image_original);
-        return image_output;
+        Mat imageOutput = imageOriginal.submat(rect);
+        Imgcodecs.imwrite("Bilder/image_output2.jpg", imageOutput);
+        Imgcodecs.imwrite("Bilder/image_recangle2.jpg", imageOriginal);
+        return imageOutput;
     }
 
     /**
@@ -184,19 +191,24 @@ public class TemplateDetection {
      * @return         Rechteck von welchem die Flache am besten zum Mittelwert passt
      */
     public Rect averageArea(List<Rect> rectList) {
-        double mean = 0;
         double sum = 0;
+
 
         rectList = removeZeros(rectList);
 
+        final double mean = rectList.stream().mapToDouble(Rect::area).average().orElse(-1);
+        /*
         for (Rect r : rectList) {
             sum += r.area();
         }
         mean = sum / rectList.size();
-
+        */
         /**
          * Prüfuen welches Rechteck am nächsten beim Mittelwert ist
          */
+        /*
+        rectList.stream().min(Comparator.comparingDouble(rect->Math.abs(rect.area()-mean))).orElse(null);
+
         double distance = Math.abs(rectList.get(0).area() - mean);
         int index = 0;
         for (int c = 1; c < rectList.size(); c++) {
@@ -209,7 +221,7 @@ public class TemplateDetection {
 
         double finalArea = rectList.get(index).area();
         Rect rect = rectList.get(index);
-        System.out.println("Mittelwert: " + mean + " FinalArea: " + finalArea);
-        return rect;
+        System.out.println("Mittelwert: " + mean + " FinalArea: " + finalArea); */
+        return rectList.stream().min(Comparator.comparingDouble(rect->Math.abs(rect.area()-mean))).orElse(null);
     }
 }

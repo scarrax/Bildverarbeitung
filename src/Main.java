@@ -26,6 +26,7 @@ import java.util.List;
  * @Email   niklas.huebner@fh-bielefeld.de
  */
 public class Main {
+    private static final double THRESHOLD = 0.7;
     public static void main(String[] args) throws Exception {
         /**
          * OpenCV Initialisieren
@@ -35,7 +36,7 @@ public class Main {
         /**
          * Bild als Mat einlesen
          */
-        String imgFile = "Bilder/pineapple1.jpg";
+        String imgFile = "Bilder/oranges1.jpg";
         Mat imgMat = Imgcodecs.imread(imgFile);
 
         /**
@@ -45,6 +46,9 @@ public class Main {
          * Template in Graustufenbild konvertieren.
          * Originalbild in Graustufenbild konvertieren.
          */
+
+        // bräuchte man nicht
+        // builderPattern pipeline
         TemplateDetection td = new TemplateDetection();
         imgMat = td.scaleMat(imgMat);
         Rect rect = td.edgeDetection(imgMat);
@@ -66,7 +70,7 @@ public class Main {
          * Rückgabewert ist eine Liste von Points wo der maxValue >= threshold ist.
          * Als Methode wird TM_CCOOEDD_NORMED verwendet, diese funktioniert mit dem maxValue.
          */
-        List<Point> detectedPoints = tm.detectTemplate(dst,template, threshold);
+        List<Point> detectedPoints = tm.detectTemplate(dst,template, THRESHOLD);
         /**
          * Es werden überlappende Punkte gefunden, in python wäre die Lösung groupRectangles.
          */

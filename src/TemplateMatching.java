@@ -13,15 +13,25 @@ import java.util.List;
 /**
  * Alle Funktionen für Matching Template
  *
- * @author  Niklas Hübner
+ * @author Niklas Hübner
  * @version 1.0
  */
 public class TemplateMatching {
+    enum Threshold {
+        THRESHOLD_06(0.6),
+        THRESHOLD_07(0.7);
+        final double threshold;
+
+        Threshold(double threshold) {
+            this.threshold = threshold;
+        }
+    }
 
     /**
      * Class constructor.
      */
-    public TemplateMatching(){}
+    public TemplateMatching() {
+    }
 
     /**
      * Finden von übereinstimmungen vom Template und dem Originalbild.
@@ -29,9 +39,9 @@ public class TemplateMatching {
      * @param srcImage      Originalbild
      * @param templateImage Template (das gesuchte Bild)
      * @param threshold     Wie genau das Template auf die Region im Originalbild passen muss
-     * @return              List von Punkten wo eine Übereinstimmung von Originalbild und Template ist
+     * @return List von Punkten wo eine Übereinstimmung von Originalbild und Template ist
      */
-    public List<Point> detectTemplate(Mat srcImage, Mat templateImage, double threshold){
+    public List<Point> detectTemplate(Mat srcImage, Mat templateImage, double threshold) {
 
         /**
          * Variablen Deklaration
@@ -90,22 +100,22 @@ public class TemplateMatching {
          * Schleife wird so lange durchlaufen bis der maximal Wert unter dem threshold ist.
          * Der maximal Wert wird mit jedem Durchlauf kleiner.
          */
-        while(true){
+        while (true) {
             mmr = Core.minMaxLoc(resultMat);
             matchLoc = mmr.maxLoc;
             maxvalue = mmr.maxVal;
             System.out.println("mmr: " + maxvalue);
 
-            if(maxvalue >= threshold){
+            if (maxvalue >= threshold) {
                 detectedPoints.add(matchLoc);
                 detectedValue.add(maxvalue);
 
                 //System.out.println("Template Matches with input image");
-                Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(),matchLoc.y + templateImage.rows()),
-                       new Scalar(0,255,0), 1,8,0);
-                Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(),matchLoc.y + templateImage.rows()),
-                        new Scalar(0, 255, 0), 1,8,0);
-            }else{
+                Imgproc.rectangle(dst, matchLoc, new Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
+                        new Scalar(0, 255, 0), 1, 8, 0);
+                Imgproc.rectangle(resultMat, matchLoc, new Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
+                        new Scalar(0, 255, 0), 1, 8, 0);
+            } else {
                 break;
             }
         }
@@ -126,7 +136,7 @@ public class TemplateMatching {
      * @param listPoints    Liste von Punkten, alle Punkte die über den threshold liegen.
      * @param srcImage      Originalbild
      * @param templateImage Template, um die finalen Rechtecke einzuzeichnen.
-     * @return              Liste von Punkten ohne Überlappungen.
+     * @return Liste von Punkten ohne Überlappungen.
      * @throws IOException
      */
     public List<Point> removeNearPoints(List<Point> listPoints, Mat srcImage, Mat templateImage) throws IOException {
@@ -153,22 +163,22 @@ public class TemplateMatching {
          */
         boolean inDistance = false;
         double distance = 20;
-        for(Point p: listPoints.subList(1, listPoints.size())){
-            for(Point n : totalPoints){
-                if((p.x == n.x) & (p.y == n.y)){
+        for (Point p : listPoints.subList(1, listPoints.size())) {
+            for (Point n : totalPoints) {
+                if ((p.x == n.x) & (p.y == n.y)) {
                     continue;
-                }else if (Math.hypot((p.x-n.x), (p.y-n.y)) > distance){
+                } else if (Math.hypot((p.x - n.x), (p.y - n.y)) > distance) {
                     inDistance = true;
-                }else{
+                } else {
                     inDistance = false;
                     break;
                 }
             }
-            if(inDistance){
+            if (inDistance) {
                 totalPoints.add(p);
                 Imgproc.rectangle(srcImage, p, new Point(p.x + templateImage.cols(),
                         p.y + templateImage.rows()), new Scalar(0, 0, 0), 1, 8, 0);
-                System.out.println("nicht gleiche werte: "+ p.x+ " " + p.y);
+                System.out.println("nicht gleiche werte: " + p.x + " " + p.y);
                 System.out.println("totalpointssize: " + totalPoints.size());
             }
 
@@ -178,7 +188,7 @@ public class TemplateMatching {
         Imgcodecs.imwrite(file3, srcImage);
 
         FileWriter writer2 = new FileWriter("ListOfTotalPoints2Sortiert");
-        for(Point p: totalPoints){
+        for (Point p : totalPoints) {
             writer2.write(p + System.lineSeparator());
         }
         writer2.close();
