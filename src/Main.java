@@ -26,64 +26,59 @@ import java.util.List;
  * @Email   niklas.huebner@fh-bielefeld.de
  */
 public class Main {
+    /*
+    * Schwellenwert welcher sich gut für die Tests geeignet hat
+    * gut für die Test 0.6-0.85
+    */
     private static final double THRESHOLD = 0.7;
     public static void main(String[] args) throws Exception {
-        /**
+        /*
          * OpenCV Initialisieren
          */
         initialiseOpenCv();
 
-        /**
+        /*
          * Bild als Mat einlesen
          */
         String imgFile = "Bilder/oranges1.jpg";
         Mat imgMat = Imgcodecs.imread(imgFile);
 
-        /**
+        /*
          * Bild vorbereiten für TemplateDetection.
          * Aufruf edgeDetection für das Rechteck welches im nächsten Schritt benötigt wird.
          * Aufruf cropTemplate um das Template zu erhalten.
          * Template in Graustufenbild konvertieren.
          * Originalbild in Graustufenbild konvertieren.
          */
+        imgMat = TemplateDetection.scaleMat(imgMat);
+        Rect rect = TemplateDetection.edgeDetection(imgMat);
+        Mat template = TemplateDetection.cropTemplate(imgMat, rect);
+        template = TemplateDetection.colorToGray(template);
+        Mat dst = TemplateDetection.colorToGray(imgMat);
 
-        // bräuchte man nicht
-        // builderPattern pipeline
-        TemplateDetection td = new TemplateDetection();
-        imgMat = td.scaleMat(imgMat);
-        Rect rect = td.edgeDetection(imgMat);
-        Mat template = td.cropTemplate(imgMat, rect);
-        template = td.colorToGray(template);
-        Mat dst = td.colorToGray(imgMat);
-
+        /*
+         * Speichert das Template in templategrey1
+         */
         Imgcodecs.imwrite("Bilder/templategrey1.jpg", template);
 
-
-
-        /**
-         * Threshold wählen, 0.6-0.85 funktioniert für die bisherigen Tests gut
-         */
-        double threshold = 0.7;
-        TemplateMatching tm = new TemplateMatching();
-
-        /**
+        /*
          * Rückgabewert ist eine Liste von Points wo der maxValue >= threshold ist.
          * Als Methode wird TM_CCOOEDD_NORMED verwendet, diese funktioniert mit dem maxValue.
          */
-        List<Point> detectedPoints = tm.detectTemplate(dst,template, THRESHOLD);
-        /**
+        List<Point> detectedPoints = TemplateMatching.detectTemplate(dst,template, THRESHOLD);
+        /*
          * Es werden überlappende Punkte gefunden, in python wäre die Lösung groupRectangles.
          */
-        List<Point> totalPoints = tm.removeNearPoints(detectedPoints, dst, template);
+        List<Point> totalPoints = TemplateMatching.removeNearPoints(detectedPoints, dst, template);
 
-        /**
+        /*
          * Speichert der gefundenen Punkte und der Punkte, nachdem entfernen der Überlappungen.
          */
         writeTxtFile("detectedPoints.txt", detectedPoints);
         writeTxtFile("totalPoints3.txt", totalPoints);
 
 
-        /**
+        /*
          * Zum Anzeigen der gefundenen Objekte muss die Matrix in ein BufferedImage konvertiert werden.
          */
         HighGui.imshow("Image", template);
@@ -97,7 +92,6 @@ public class Main {
      *
      * @param filename     Textdateiname
      * @param list         Liste von Punkten
-     * @throws IOException
      */
     public static void writeTxtFile(String filename, List<Point> list) throws IOException {
         FileWriter writer = new FileWriter(filename);
@@ -107,7 +101,7 @@ public class Main {
         writer.close();
     }
 
-    /**
+    /*
      * Laden der OpenCV Library.
      */
     public static void initialiseOpenCv(){
@@ -121,7 +115,6 @@ public class Main {
      *
      * @param image      Mat Bild
      * @return           BufferedImage
-     * @throws Exception
      */
     public static BufferedImage convertMatToBufImg(Mat image) throws Exception{
 
@@ -145,7 +138,7 @@ public class Main {
     /**
      * Bild anzeigen
      *
-     * @param bufImage Bufferedimage Bild
+     * @param bufImage Buffered-image Bild
      */
     public static void displayImage(BufferedImage bufImage){
 

@@ -16,21 +16,12 @@ import java.util.List;
  * @author Niklas Hübner
  * @version 1.0
  */
-public class TemplateMatching {
-    enum Threshold {
-        THRESHOLD_06(0.6),
-        THRESHOLD_07(0.7);
-        final double threshold;
+public final class TemplateMatching {
 
-        Threshold(double threshold) {
-            this.threshold = threshold;
-        }
-    }
-
-    /**
+    /*
      * Class constructor.
      */
-    public TemplateMatching() {
+    private TemplateMatching() {
     }
 
     /**
@@ -41,9 +32,9 @@ public class TemplateMatching {
      * @param threshold     Wie genau das Template auf die Region im Originalbild passen muss
      * @return List von Punkten wo eine Übereinstimmung von Originalbild und Template ist
      */
-    public List<Point> detectTemplate(Mat srcImage, Mat templateImage, double threshold) {
+    public static List<Point> detectTemplate(Mat srcImage, Mat templateImage, double threshold) {
 
-        /**
+        /*
          * Variablen Deklaration
          */
         List<Point> detectedPoints = new ArrayList<Point>();
@@ -52,7 +43,7 @@ public class TemplateMatching {
         double maxvalue;
         Mat dst = srcImage.clone();
 
-        /**
+        /*
          * Deklaration der Mat resultMat
          */
         int result_cols = srcImage.cols() - templateImage.cols() + 1;
@@ -62,7 +53,7 @@ public class TemplateMatching {
         resultMat.create(result_rows, result_cols, CvType.CV_32FC1);
 
 
-        /**
+        /*
          * Erster durchlauf um zu Prüfen, ob das Template im Originalbild ist.
          * TM_CCOEFF_NORMED liefert das beste Ergebnis beim max value.
          * matchLoc gibt den aktuellen Punkt an für das maxValue.
@@ -77,7 +68,7 @@ public class TemplateMatching {
         String file6 = "Bilder/result6.jpg";
         Imgcodecs.imwrite(file6, resultMat);
         //Imgcodecs.imwrite("Bilder/resultMat.jpg", resultMat);
-        /**
+        /*
          * Gefunden Werte den entsprechenden Listen hinzufügen.
          */
         detectedPoints.add(matchLoc);
@@ -86,7 +77,7 @@ public class TemplateMatching {
         System.out.println("List of maxvalue " + detectedValue);
 
 
-        /**
+        /*
          * Einzeichnen vom Rechteck an der Location von matchLoc,
          * im Originalbild und in der result Matrix.
          */
@@ -96,7 +87,7 @@ public class TemplateMatching {
                 new Scalar(0, 0, 0), 2, 8, 0);
         Imgcodecs.imwrite("Bilder/resultMat2.jpg", resultMat);
 
-        /**
+        /*
          * Schleife wird so lange durchlaufen bis der maximal Wert unter dem threshold ist.
          * Der maximal Wert wird mit jedem Durchlauf kleiner.
          */
@@ -137,12 +128,11 @@ public class TemplateMatching {
      * @param srcImage      Originalbild
      * @param templateImage Template, um die finalen Rechtecke einzuzeichnen.
      * @return Liste von Punkten ohne Überlappungen.
-     * @throws IOException
      */
-    public List<Point> removeNearPoints(List<Point> listPoints, Mat srcImage, Mat templateImage) throws IOException {
+    public static List<Point> removeNearPoints(List<Point> listPoints, Mat srcImage, Mat templateImage) throws IOException {
         System.out.println("ListofPoints: " + listPoints);
 
-        /**
+        /*
          * Startpunkte
          */
         List<Point> totalPoints = new ArrayList<>();
@@ -155,7 +145,7 @@ public class TemplateMatching {
         String file5 = "Bilder/firstRectangle.jpg";
         Imgcodecs.imwrite(file5, srcImage);
 
-        /**
+        /*
          * Entfernen von zu naher Rechtecke.
          * Es wird überprüft, ob der aktuelle Punkt in einer Distanz zu einem anderen Punkt liegt.
          * Wenn inDistance true ist, ist der Wert ok und liegt außerhalb der vereinbarten Distanz
